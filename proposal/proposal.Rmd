@@ -7,6 +7,7 @@ output: github_document
 ```{r load-packages, message = FALSE}
 library(tidyverse)
 library(broom)
+library(readxl)
 ```
 
 ## 1. Introduction
@@ -14,6 +15,78 @@ library(broom)
 
 
 ## 2. Data
+
+```{r load_data}
+
+seabird_count <- read_excel("../data/Copy of Trenton seabird count_nov 2014-2023.xls")
+
+seabird_count <- seabird_count %>%
+  rename(observer = "OBSERVER",
+         date = "DATE",
+         hours = "HOURS",
+         time = "TIME",
+         temp = "TEMP (F)",
+         wind_speed = "WIND SPEED (mph)",
+         wind_direction = "WIND DIRECTION",
+         tide_obs = "TIDE OBS",
+         tide_percentage = "TIDE %",
+         weather_obs = "WEATHER OBS",
+         weather_percentage = "WEATHER %",
+         precipitation = "PRECIPITATION",
+         total = "Total",
+         herring_gull = "Herring Gull",
+         lauging_gull = "Laughing Gull",
+         great_black_backed_gull = "Great Black-backed Gull",
+         red_throated_loon = "red throated loon",
+         common_loon = "Common Loon",
+         long_tailed_duck = "Long-tailed Duck",
+         red_breasted_merganser = "Red breasted Merganser",
+         common_merganser = "Common Merganser",
+         black_duck = "Black Duck",
+         surf_scoter = "surf scoter",
+         common_eider = "Common Eider",
+         bufflehead = "Bufflehead",
+         goldeneye = "Goldeneye",
+         lesser_scaup = "Lesser Scaup",
+         black_scoter = "Black Scoter",
+         white_winged_scoter = "White-Winged Scoter",
+         red_necked_grebe = "Red-Necked Grebe",
+         horned_grebe = "Horned Grebe",
+         bonapartes_gull = "Bonaparte's Gull",
+         belted_kingfisher = "Belted Kingfisher",
+         common_tern = "Common Tern",
+         ring_billed_gull = "Ring-Billed Gull",
+         canada_goose = "Canada Goose", 
+         great_blue_heron = "Great Blue Heron",
+         double_crested_cormorant = "Double-Crested Cormorant",
+         common_crow = "Common Crow",
+         black_guillemot = "Black Guillemot",
+         osprey = "Osprey",
+         mallard_duck = "Mallard Duck",
+         spotted_sandpiper = "Spotted Sandpiper",
+         semipalmated_plover = "Semipalmated Plover",
+         bald_eagle = "Bald Eagle",
+         red_tailed_hawk = "Red-Tailed hawk",
+         turkey_vulture = "Turkey Vulture",
+         rough_legged_hawk = "rough legged hawk",
+         harrier = "Harrier",
+         kestrel = "Kestrel",
+         turkey = "Turkey",
+         unidentifiable_duck = "Unidentifiable Duck",
+         unidentifiable = "Unidentifiable (too far to ID)")
+
+```
+
+```{r remove_columns_and_rows}
+seabird_count <- seabird_count %>%
+ select(-"...17", -"COMMENTS", -"...59", -"...60") %>%
+  slice(-1) %>%
+  mutate(across(total:unidentifiable, as.numeric)) %>%
+  pivot_longer(
+    cols = total:unidentifiable,
+      names_to = "species",
+    values_to = "count")
+```
 
 
 ## 3. Ethics review
