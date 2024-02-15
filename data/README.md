@@ -3,7 +3,7 @@
 Place data file(s) in this folder.
 
 Then, include codebooks (variables, and their descriptions) for your data file(s)
-using the following format.
+using the following format
 
 ## name of data file
 
