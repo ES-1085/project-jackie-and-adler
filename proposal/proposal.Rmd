@@ -1,6 +1,6 @@
 ---
 title: "Project proposal"
-author: "Team name"
+author: "Adler and Jackie"
 output: github_document
 ---
 
@@ -12,6 +12,9 @@ library(readxl)
 
 ## 1. Introduction
 
+The data is of the presence of birds around an aquaculture farm, to see if the aquaculture farm impacted the population of birds in the area, and if those bird populations were negatively impacted by the planes coming from the nearby airport. It was collected by John Anderson and a group of research assistants. They went out a few days each month, and for an hour they collected data on the environmental factors (including temperature, wind), the tide, and what species were observed.
+
+We are looking to explore any patterns in the presence of bird species, and which birds are found in specific whether conditions. 
 
 
 ## 2. Data
@@ -88,12 +91,28 @@ seabird_count <- seabird_count %>%
     values_to = "count")
 ```
 
+```{r glimpse}
+
+glimpse(seabird_count)
+
+```
 
 ## 3. Ethics review
 
+This research does not include people, so we are not concerned with an ethics review.
+
 ## 4. Data analysis plan
 
+The variables we are visualizing are the species count, season, temperature, wind speed, and tide observation. We will be looking to see if the variables for a certain group of birds have similarities or differences to the variables for other groups of birds. 
 
-###
+We won't need any additional data, but we will need to do a little research on bird groupings (for example, ducks vs gulls). 
 
+```{r preliminary_analysis_month_count}
 
+ggplot(seabird_count, aes(x = month, fill = count)) +
+  geom_bar() +
+  labs(x = "Month", y = "Number of Birds", title = "Number of Birds Recorded Each Month", subtitle = "2014 - 2024")
+
+```
+
+We think that bar graphs and scatter plots will be most useful in our data visualization. 
