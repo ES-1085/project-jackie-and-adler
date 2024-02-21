@@ -38,7 +38,7 @@ seabird_count <- seabird_count %>%
          precipitation = "PRECIPITATION",
          total = "Total",
          herring_gull = "Herring Gull",
-         lauging_gull = "Laughing Gull",
+         laughing_gull = "Laughing Gull",
          great_black_backed_gull = "Great Black-backed Gull",
          red_throated_loon = "red throated loon",
          common_loon = "Common Loon",
@@ -89,12 +89,19 @@ seabird_count <- seabird_count %>%
     cols = total:unidentifiable,
       names_to = "species",
     values_to = "count")
+
+seabird_count %>%
+  mutate(count = str_replace_na(count, "0")) %>%
+  mutate(count = as.double(count)) %>%
+  mutate(species = str_replace(species, "Surf Scoter", "surf_scoter"))
+  
 ```
 
 ```{r glimpse}
 
 glimpse(seabird_count)
-
+unique(seabird_count$species)
+unique(seabird_count$count)
 ```
 
 ## 3. Ethics review
