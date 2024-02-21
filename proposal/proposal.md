@@ -126,32 +126,12 @@ mutate(across(total:unidentifiable, as.numeric)) %>%
     ## ℹ Run `dplyr::last_dplyr_warnings()` to see the 2 remaining warnings.
 
 ``` r
-seabird_count  %>%
+seabird_count <- seabird_count  %>%
   mutate(count = str_replace_na(count, "0")) %>%
   mutate(count = as.double(count)) %>%
-  mutate(species = str_replace(species, "Surf Scoter", "surf_scoter"))
-```
-
-    ## # A tibble: 34,104 × 16
-    ##     year month observer date                hours  time  temp wind_speed
-    ##    <dbl> <dbl> <chr>    <dttm>              <dbl> <dbl> <dbl> <chr>     
-    ##  1    14    11 BDRW     2014-11-03 00:00:00     1  1015  35.5 7         
-    ##  2    14    11 BDRW     2014-11-03 00:00:00     1  1015  35.5 7         
-    ##  3    14    11 BDRW     2014-11-03 00:00:00     1  1015  35.5 7         
-    ##  4    14    11 BDRW     2014-11-03 00:00:00     1  1015  35.5 7         
-    ##  5    14    11 BDRW     2014-11-03 00:00:00     1  1015  35.5 7         
-    ##  6    14    11 BDRW     2014-11-03 00:00:00     1  1015  35.5 7         
-    ##  7    14    11 BDRW     2014-11-03 00:00:00     1  1015  35.5 7         
-    ##  8    14    11 BDRW     2014-11-03 00:00:00     1  1015  35.5 7         
-    ##  9    14    11 BDRW     2014-11-03 00:00:00     1  1015  35.5 7         
-    ## 10    14    11 BDRW     2014-11-03 00:00:00     1  1015  35.5 7         
-    ## # ℹ 34,094 more rows
-    ## # ℹ 8 more variables: wind_direction <chr>, tide_obs <chr>,
-    ## #   tide_percentage <dbl>, weather_obs <chr>, weather_percentage <dbl>,
-    ## #   precipitation <chr>, species <chr>, count <dbl>
-
-``` r
- # mutate(tide_obs = str_replace_all(tide_obs, "half", "mid"))
+  mutate(species = str_replace(species, "Surf Scoter", "surf_scoter")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "half", "mid")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "higgh", "high"))
 ```
 
 ``` r
@@ -175,7 +155,7 @@ glimpse(seabird_count)
     ## $ weather_percentage <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
     ## $ precipitation      <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
     ## $ species            <chr> "total", "herring_gull", "laughing_gull", "great_bl…
-    ## $ count              <dbl> 133, 60, NA, 0, NA, 1, 0, 0, 0, 0, NA, 0, 53, 0, NA…
+    ## $ count              <dbl> 133, 60, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 53, 0, 0, 0,…
 
 ``` r
 unique(seabird_count$species)
@@ -189,38 +169,38 @@ unique(seabird_count$species)
     ## [11] "surf_scoter"              "common_eider"            
     ## [13] "bufflehead"               "goldeneye"               
     ## [15] "lesser_scaup"             "black_scoter"            
-    ## [17] "Surf Scoter"              "white_winged_scoter"     
-    ## [19] "red_necked_grebe"         "horned_grebe"            
-    ## [21] "bonapartes_gull"          "belted_kingfisher"       
-    ## [23] "common_tern"              "ring_billed_gull"        
-    ## [25] "canada_goose"             "great_blue_heron"        
-    ## [27] "double_crested_cormorant" "common_crow"             
-    ## [29] "black_guillemot"          "osprey"                  
-    ## [31] "mallard_duck"             "spotted_sandpiper"       
-    ## [33] "semipalmated_plover"      "bald_eagle"              
-    ## [35] "red_tailed_hawk"          "turkey_vulture"          
-    ## [37] "rough_legged_hawk"        "harrier"                 
-    ## [39] "kestrel"                  "turkey"                  
-    ## [41] "unidentifiable_duck"      "unidentifiable"
+    ## [17] "white_winged_scoter"      "red_necked_grebe"        
+    ## [19] "horned_grebe"             "bonapartes_gull"         
+    ## [21] "belted_kingfisher"        "common_tern"             
+    ## [23] "ring_billed_gull"         "canada_goose"            
+    ## [25] "great_blue_heron"         "double_crested_cormorant"
+    ## [27] "common_crow"              "black_guillemot"         
+    ## [29] "osprey"                   "mallard_duck"            
+    ## [31] "spotted_sandpiper"        "semipalmated_plover"     
+    ## [33] "bald_eagle"               "red_tailed_hawk"         
+    ## [35] "turkey_vulture"           "rough_legged_hawk"       
+    ## [37] "harrier"                  "kestrel"                 
+    ## [39] "turkey"                   "unidentifiable_duck"     
+    ## [41] "unidentifiable"
 
 ``` r
 unique(seabird_count$count)
 ```
 
-    ##   [1] 133  60  NA   0   1  53  19 115   8   2  18  85 181 123  11  42 125  73
-    ##  [19]  24   4  33   9   6  90  79  49   3  15  99  76  10  45  28   5  54  40
-    ##  [37]  51  23  22  46  41  47  39  12  26 163 156  78  35  21   7 129  93  16
-    ##  [55] 103  68  14  34  61  29  96  63  20  64  58  56  13  27  17  32  25  30
-    ##  [73]  89  65 153  55  81  44 128 101  86 164 193  84  37  31 148  70 183  91
-    ##  [91]  38 135  36 142 114 143 157  92  75 100 160  74 107  66  77  48 151 140
-    ## [109] 112  95  72 174 141  87  43 225 127 122 108  94  69  59  67 218 126  82
-    ## [127]  57 104  52  50 118  71 177 117 113  62 106 206  80 138 159 102 187 145
-    ## [145]  98 231 147 158 262 172 162 188 173  83 134 110 120 310 304  97 154 197
-    ## [163] 239 202 116 121 124 249 234 176 161 192 132 137 139 109 196 155 185 149
-    ## [181] 258 111 152 167 263 261 373 341 130  88 136 246 169 279 213 228 267 240
-    ## [199] 214 395 293 221 285 245 217 191 178 296 294 215 195 168 184 227 223 272
-    ## [217] 250 186 226 222 252 248 180 170 105 150 229 201 182 144 392 216 244 290
-    ## [235] 146 254 194 256 328
+    ##   [1] 133  60   0   1  53  19 115   8   2  18  85 181 123  11  42 125  73  24
+    ##  [19]   4  33   9   6  90  79  49   3  15  99  76  10  45  28   5  54  40  51
+    ##  [37]  23  22  46  41  47  39  12  26 163 156  78  35  21   7 129  93  16 103
+    ##  [55]  68  14  34  61  29  96  63  20  64  58  56  13  27  17  32  25  30  89
+    ##  [73]  65 153  55  81  44 128 101  86 164 193  84  37  31 148  70 183  91  38
+    ##  [91] 135  36 142 114 143 157  92  75 100 160  74 107  66  77  48 151 140 112
+    ## [109]  95  72 174 141  87  43 225 127 122 108  94  69  59  67 218 126  82  57
+    ## [127] 104  52  50 118  71 177 117 113  62 106 206  80 138 159 102 187 145  98
+    ## [145] 231 147 158 262 172 162 188 173  83 134 110 120 310 304  97 154 197 239
+    ## [163] 202 116 121 124 249 234 176 161 192 132 137 139 109 196 155 185 149 258
+    ## [181] 111 152 167 263 261 373 341 130  88 136 246 169 279 213 228 267 240 214
+    ## [199] 395 293 221 285 245 217 191 178 296 294 215 195 168 184 227 223 272 250
+    ## [217] 186 226 222 252 248 180 170 105 150 229 201 182 144 392 216 244 290 146
+    ## [235] 254 194 256 328
 
 ## 3. Ethics review
 
