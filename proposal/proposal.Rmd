@@ -84,17 +84,19 @@ seabird_count <- seabird_count %>%
 seabird_count <- seabird_count %>%
  select(-"...17", -"COMMENTS", -"...59", -"...60") %>%
   slice(-1) %>%
-  mutate(across(total:unidentifiable, as.numeric)) %>%
+mutate(across(total:unidentifiable, as.numeric)) %>%
   pivot_longer(
     cols = total:unidentifiable,
       names_to = "species",
-    values_to = "count")
-
-seabird_count %>%
+   values_to = "count")
+  
+```
+```{r}
+seabird_count  %>%
   mutate(count = str_replace_na(count, "0")) %>%
   mutate(count = as.double(count)) %>%
   mutate(species = str_replace(species, "Surf Scoter", "surf_scoter"))
-  
+ # mutate(tide_obs = str_replace_all(tide_obs, "half", "mid"))
 ```
 
 ```{r glimpse}

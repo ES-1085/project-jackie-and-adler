@@ -111,11 +111,11 @@ seabird_count <- seabird_count %>%
 seabird_count <- seabird_count %>%
  select(-"...17", -"COMMENTS", -"...59", -"...60") %>%
   slice(-1) %>%
-  mutate(across(total:unidentifiable, as.numeric)) %>%
+mutate(across(total:unidentifiable, as.numeric)) %>%
   pivot_longer(
     cols = total:unidentifiable,
       names_to = "species",
-    values_to = "count")
+   values_to = "count")
 ```
 
     ## Warning: There were 3 warnings in `mutate()`.
@@ -126,7 +126,7 @@ seabird_count <- seabird_count %>%
     ## ℹ Run `dplyr::last_dplyr_warnings()` to see the 2 remaining warnings.
 
 ``` r
-seabird_count %>%
+seabird_count  %>%
   mutate(count = str_replace_na(count, "0")) %>%
   mutate(count = as.double(count)) %>%
   mutate(species = str_replace(species, "Surf Scoter", "surf_scoter"))
@@ -149,6 +149,10 @@ seabird_count %>%
     ## # ℹ 8 more variables: wind_direction <chr>, tide_obs <chr>,
     ## #   tide_percentage <dbl>, weather_obs <chr>, weather_percentage <dbl>,
     ## #   precipitation <chr>, species <chr>, count <dbl>
+
+``` r
+ # mutate(tide_obs = str_replace_all(tide_obs, "half", "mid"))
+```
 
 ``` r
 glimpse(seabird_count)
