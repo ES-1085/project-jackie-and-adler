@@ -91,13 +91,15 @@ mutate(across(total:unidentifiable, as.numeric)) %>%
    values_to = "count")
   
 ```
-```{r}
+```{r tidy_data}
 seabird_count <- seabird_count  %>%
   mutate(count = str_replace_na(count, "0")) %>%
   mutate(count = as.double(count)) %>%
   mutate(species = str_replace(species, "Surf Scoter", "surf_scoter")) %>%
   mutate(tide_obs = str_replace(tide_obs, "half", "mid")) %>%
   mutate(tide_obs = str_replace(tide_obs, "higgh", "high"))
+
+
   
 ```
 
