@@ -97,8 +97,20 @@ seabird_count <- seabird_count  %>%
   mutate(count = as.double(count)) %>%
   mutate(species = str_replace(species, "Surf Scoter", "surf_scoter")) %>%
   mutate(tide_obs = str_replace(tide_obs, "half", "mid")) %>%
-  mutate(tide_obs = str_replace(tide_obs, "higgh", "high"))
-
+  mutate(tide_obs = str_replace(tide_obs, "higgh", "high")) %>% 
+  mutate(tide_obs = str_replace(tide_obs, "hightide", "high")) %>% 
+  mutate(tide_obs = str_replace(tide_obs, "mid-high", "high")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "thre quarters", "high")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "three quarters", "high")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "threequarters", "high")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "med", "mid")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "mid-low", "low")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "mlow", "low")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "one third", "low")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "quarter", "low")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "third", "low")) %>%
+  #mutate(tide_obs = str_replace(weather_obs, "", "")) %>%
+  
 
   
 ```
