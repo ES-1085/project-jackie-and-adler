@@ -91,12 +91,10 @@ mutate(across(total:unidentifiable, as.numeric)) %>%
    values_to = "count")
   
 ```
-<<<<<<< HEAD
 
-```{r}
-=======
+
 ```{r tidy_data}
->>>>>>> bc39e81be72d3eb3e40690c50eb5192f3bae1c64
+bc39e81be72d3eb3e40690c50eb5192f3bae1c64
 seabird_count <- seabird_count  %>%
   mutate(count = str_replace_na(count, "0")) %>%
   mutate(count = as.double(count)) %>%
