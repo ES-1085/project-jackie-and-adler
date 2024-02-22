@@ -91,14 +91,32 @@ mutate(across(total:unidentifiable, as.numeric)) %>%
    values_to = "count")
   
 ```
+<<<<<<< HEAD
 
 ```{r}
+=======
+```{r tidy_data}
+>>>>>>> bc39e81be72d3eb3e40690c50eb5192f3bae1c64
 seabird_count <- seabird_count  %>%
   mutate(count = str_replace_na(count, "0")) %>%
   mutate(count = as.double(count)) %>%
   mutate(species = str_replace(species, "Surf Scoter", "surf_scoter")) %>%
   mutate(tide_obs = str_replace(tide_obs, "half", "mid")) %>%
-  mutate(tide_obs = str_replace(tide_obs, "higgh", "high"))
+  mutate(tide_obs = str_replace(tide_obs, "higgh", "high")) %>% 
+  mutate(tide_obs = str_replace(tide_obs, "hightide", "high")) %>% 
+  mutate(tide_obs = str_replace(tide_obs, "mid-high", "high")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "thre quarters", "high")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "three quarters", "high")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "threequarters", "high")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "med", "mid")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "mid-low", "low")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "mlow", "low")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "one third", "low")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "quarter", "low")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "third", "low")) %>%
+  #mutate(tide_obs = str_replace(weather_obs, "", "")) %>%
+  
+
   
 ```
 
