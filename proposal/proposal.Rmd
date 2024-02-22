@@ -91,6 +91,7 @@ mutate(across(total:unidentifiable, as.numeric)) %>%
    values_to = "count")
   
 ```
+
 ```{r}
 seabird_count <- seabird_count  %>%
   mutate(count = str_replace_na(count, "0")) %>%
