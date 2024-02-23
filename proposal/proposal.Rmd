@@ -152,7 +152,7 @@ seabird_count_tidy <- seabird_count %>%
   mutate(weather_obs = str_replace(weather_obs, "cloudyy with drizzle	", "rain")) %>%
   mutate(weather_obs = str_replace(weather_obs, "cloudyy", "cloudy")) %>% 
   mutate(weather_obs = str_replace(weather_obs, "cloudy with drizzle", "cloudy")) %>% 
-  mutate(weather_obs = str_replace(weather_obs, "sunny white caps present", "sunny"))
+  mutate(weather_obs = str_replace(weather_obs, "sunny  white caps present", "sunny"))
 
 ```
 
