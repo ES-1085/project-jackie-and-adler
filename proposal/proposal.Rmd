@@ -111,11 +111,49 @@ seabird_count <- seabird_count  %>%
   mutate(tide_obs = str_replace(tide_obs, "mlow", "low")) %>%
   mutate(tide_obs = str_replace(tide_obs, "one third", "low")) %>%
   mutate(tide_obs = str_replace(tide_obs, "quarter", "low")) %>%
-  mutate(tide_obs = str_replace(tide_obs, "third", "low")) %>%
-  #mutate(tide_obs = str_replace(weather_obs, "", "")) %>%
-  
+  mutate(tide_obs = str_replace(tide_obs, "third", "low")) 
 
-  
+seabird_count_tidy <- seabird_count %>%
+  mutate(weather_obs = str_replace(weather_obs, "clear, runny", "clear")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "clear, sunny", "clear")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "sunny, whitecaps present", "clear")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "sunny, breezy", "clear")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "sunny!", "clear")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "few clouds", "clear")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "mosly clear", "clear")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "mostly sunny", "clear")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "clody, breezy, waves 1-2 feet", "cloudy")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "cloud", "cloudy")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "clouds", "cloudy")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "mostly cloudy", "cloudy")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "partly coudy", "cloudy")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "cloufy", "cloudy")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "high cloudy", "cloudy")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "hih clouds", "cloudy")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "foggy, low visability", "fog")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "hazy", "fog")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "high haze", "fog")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "high overcast", "overcast")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "low overcast", "overcast")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "cloudy w drizzle", "rain")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "cloudy / rain", "rain")) %>% 
+  mutate(weather_obs = str_replace(weather_obs, "cloudyy", "cloudy")) %>% 
+  mutate(weather_obs = str_replace(weather_obs, "partly cloudyy", "cloudy")) %>% 
+  mutate(weather_obs = str_replace(weather_obs, "sunny,", "sunny")) %>% 
+  mutate(weather_obs = str_replace_all(weather_obs, "sunny, white caps present", "sunny")) %>% 
+  mutate(weather_obs = str_replace(weather_obs, "clear!", "clear")) %>% 
+  mutate(weather_obs = str_replace(weather_obs, "rainy", "rain")) %>% 
+  mutate(weather_obs = str_replace(weather_obs, "mostly clear", "clear")) %>% 
+  mutate(weather_obs = str_replace(weather_obs, "cloudys", "cloudy")) %>% 
+  mutate(weather_obs = str_replace(weather_obs, "cloudyy, breezy, waves 1-2 feet", "cloudy")) %>% 
+  mutate(weather_obs = str_replace(weather_obs, "cloudyy/rain", "cloudy")) %>% 
+  mutate(weather_obs = str_replace(weather_obs, "hih cloudy", "cloudy")) %>% 
+  mutate(weather_obs = str_replace(weather_obs, "foggy", "fog")) %>% 
+  mutate(weather_obs = str_replace(weather_obs, "cloudyy with drizzle	", "rain")) %>%
+  mutate(weather_obs = str_replace(weather_obs, "cloudyy", "cloudy")) %>% 
+  mutate(weather_obs = str_replace(weather_obs, "cloudy with drizzle", "cloudy")) %>% 
+  mutate(weather_obs = str_replace(weather_obs, "sunny white caps present", "sunny"))
+
 ```
 
 ```{r glimpse}
@@ -123,6 +161,12 @@ seabird_count <- seabird_count  %>%
 glimpse(seabird_count)
 unique(seabird_count$species)
 unique(seabird_count$count)
+unique(seabird_count$weather_obs)
+
+seabird_count_tidy %>%
+  # mutate(weather_obs = str_replace_all(weather_obs, "sunny white caps present", "sunny")) %>%
+  # mutate(weather_obs = str_replace(weather_obs, "cloudyy", "cloudy")) %>%
+  distinct(weather_obs)
 ```
 
 ## 3. Ethics review
