@@ -103,7 +103,7 @@ seabird_count %>%
   mutate(wind_direction_clean = case_when(wind_direction %in% c("5", "10", "15","calm") ~ wind_speed,
                                           TRUE ~ wind_direction)) %>%
   mutate(wind_speed_clean = case_when(wind_speed %in% c("n", "s", "e", "w", "sw", "nw", "ne") ~ wind_direction,
-                                      TRUE ~ wind_speed)) 
+                                          TRUE ~ wind_speed)) 
   relocate(weather_obs_original, .before = weather_obs) %>%
   distinct(wind_direction_clean)
 
