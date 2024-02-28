@@ -126,7 +126,37 @@ mutate(across(total:unidentifiable, as.numeric)) %>%
     ## ℹ Run `dplyr::last_dplyr_warnings()` to see the 2 remaining warnings.
 
 ``` r
-seabird_count_tidy <- seabird_count  %>%
+seabird_count2 <- seabird_count %>%
+  mutate(weather_obs_original = weather_obs) %>%
+  mutate(weather_obs = case_when(str_detect(weather_obs, pattern = "clear|sunny") ~ "clear",
+                              str_detect(weather_obs, pattern = "clou|clod") ~ "cloudy",
+                              TRUE ~ weather_obs)) %>%
+  mutate(wind_direction_clean = case_when(wind_direction %in% c("5", "10", "15","calm") ~ wind_speed,
+                                          TRUE ~ wind_direction)) %>%
+  mutate(wind_speed_clean = case_when(wind_speed %in% c("n", "s", "e", "w", "sw", "nw", "ne") ~ wind_direction,
+                                          TRUE ~ wind_speed)) 
+seabird_count2 %>%
+  relocate(weather_obs_original, .before = weather_obs) %>%
+  distinct(wind_speed_clean)
+```
+
+    ## # A tibble: 43 × 1
+    ##    wind_speed_clean  
+    ##    <chr>             
+    ##  1 7                 
+    ##  2 10                
+    ##  3 5.5               
+    ##  4 1                 
+    ##  5 25                
+    ##  6 2                 
+    ##  7 11                
+    ##  8 0                 
+    ##  9 6                 
+    ## 10 7.4000000000000004
+    ## # ℹ 33 more rows
+
+``` r
+seabird_count_tidy <- seabird_count %>%
   mutate(count = str_replace_na(count, "0")) %>%
   mutate(count = as.double(count)) %>%
   mutate(species = str_replace(species, "Surf Scoter", "surf_scoter")) %>%
@@ -139,12 +169,10 @@ seabird_count_tidy <- seabird_count  %>%
   mutate(tide_obs = str_replace(tide_obs, "threequarters", "high")) %>%
   mutate(tide_obs = str_replace(tide_obs, "med", "mid")) %>%
   mutate(tide_obs = str_replace(tide_obs, "mid-low", "low")) %>%
-  mutate(tide_obs = str_replace(tide_obs, "mlow", "low")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "one low", "low")) %>%
   mutate(tide_obs = str_replace(tide_obs, "one third", "low")) %>%
   mutate(tide_obs = str_replace(tide_obs, "quarter", "low")) %>%
-  mutate(tide_obs = str_replace(tide_obs, "third", "low")) 
-
-seabird_count_tidy <- seabird_count %>%
+  mutate(tide_obs = str_replace(tide_obs, "third", "low")) %>% 
   mutate(weather_obs = str_replace(weather_obs, "clear, runny", "clear")) %>%
   mutate(weather_obs = str_replace(weather_obs, "clear, sunny", "clear")) %>%
   mutate(weather_obs = str_replace(weather_obs, "sunny, whitecaps present", "clear")) %>%
@@ -171,9 +199,9 @@ seabird_count_tidy <- seabird_count %>%
   mutate(weather_obs = str_replace(weather_obs, "cloudyy", "cloudy")) %>% 
   mutate(weather_obs = str_replace(weather_obs, "partly cloudyy", "cloudy")) %>% 
   mutate(weather_obs = str_replace(weather_obs, "sunny,", "sunny")) %>% 
-  mutate(weather_obs = str_replace_all(weather_obs, "sunny, white caps present", "sunny")) %>% 
+  mutate(weather_obs = str_replace(weather_obs, "sunny, white caps present", "sunny")) %>% 
   mutate(weather_obs = str_replace(weather_obs, "clear!", "clear")) %>% 
-  mutate(weather_obs = str_replace(weather_obs, "rainy", "rain")) %>% 
+  mutate(weather_obs = str_replace(weather_obs, pattern = "[rainy|]", "rain")) %>% 
   mutate(weather_obs = str_replace(weather_obs, "mostly clear", "clear")) %>% 
   mutate(weather_obs = str_replace(weather_obs, "cloudys", "cloudy")) %>% 
   mutate(weather_obs = str_replace(weather_obs, "cloudyy, breezy, waves 1-2 feet", "cloudy")) %>% 
@@ -183,126 +211,94 @@ seabird_count_tidy <- seabird_count %>%
   mutate(weather_obs = str_replace(weather_obs, "cloudyy with drizzle   ", "rain")) %>%
   mutate(weather_obs = str_replace(weather_obs, "cloudyy", "cloudy")) %>% 
   mutate(weather_obs = str_replace(weather_obs, "cloudy with drizzle", "cloudy")) %>% 
-  mutate(weather_obs = str_replace(weather_obs, "sunny white caps present", "sunny"))
+  mutate(weather_obs = str_replace(weather_obs, "sunny  white caps present", "sunny")) %>% 
+  mutate(weather_obs = str_replace(weather_obs, "cloudy, breezy, waves 1-2 feet", "cloudy")) %>% 
+  mutate(weather_obs = str_replace(weather_obs, "cloudy/rain", "rain"))
 ```
-
-``` r
-glimpse(seabird_count)
-```
-
-    ## Rows: 34,104
-    ## Columns: 16
-    ## $ year               <dbl> 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,…
-    ## $ month              <dbl> 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,…
-    ## $ observer           <chr> "BDRW", "BDRW", "BDRW", "BDRW", "BDRW", "BDRW", "BD…
-    ## $ date               <dttm> 2014-11-03, 2014-11-03, 2014-11-03, 2014-11-03, 20…
-    ## $ hours              <dbl> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
-    ## $ time               <dbl> 1015, 1015, 1015, 1015, 1015, 1015, 1015, 1015, 101…
-    ## $ temp               <dbl> 35.5, 35.5, 35.5, 35.5, 35.5, 35.5, 35.5, 35.5, 35.…
-    ## $ wind_speed         <chr> "7", "7", "7", "7", "7", "7", "7", "7", "7", "7", "…
-    ## $ wind_direction     <chr> "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "…
-    ## $ tide_obs           <chr> "low", "low", "low", "low", "low", "low", "low", "l…
-    ## $ tide_percentage    <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
-    ## $ weather_obs        <chr> "clear", "clear", "clear", "clear", "clear", "clear…
-    ## $ weather_percentage <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
-    ## $ precipitation      <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
-    ## $ species            <chr> "total", "herring_gull", "laughing_gull", "great_bl…
-    ## $ count              <dbl> 133, 60, NA, 0, NA, 1, 0, 0, 0, 0, NA, 0, 53, 0, NA…
-
-``` r
-unique(seabird_count$species)
-```
-
-    ##  [1] "total"                    "herring_gull"            
-    ##  [3] "laughing_gull"            "great_black_backed_gull" 
-    ##  [5] "red_throated_loon"        "common_loon"             
-    ##  [7] "long_tailed_duck"         "red_breasted_merganser"  
-    ##  [9] "common_merganser"         "black_duck"              
-    ## [11] "surf_scoter"              "common_eider"            
-    ## [13] "bufflehead"               "goldeneye"               
-    ## [15] "lesser_scaup"             "black_scoter"            
-    ## [17] "Surf Scoter"              "white_winged_scoter"     
-    ## [19] "red_necked_grebe"         "horned_grebe"            
-    ## [21] "bonapartes_gull"          "belted_kingfisher"       
-    ## [23] "common_tern"              "ring_billed_gull"        
-    ## [25] "canada_goose"             "great_blue_heron"        
-    ## [27] "double_crested_cormorant" "common_crow"             
-    ## [29] "black_guillemot"          "osprey"                  
-    ## [31] "mallard_duck"             "spotted_sandpiper"       
-    ## [33] "semipalmated_plover"      "bald_eagle"              
-    ## [35] "red_tailed_hawk"          "turkey_vulture"          
-    ## [37] "rough_legged_hawk"        "harrier"                 
-    ## [39] "kestrel"                  "turkey"                  
-    ## [41] "unidentifiable_duck"      "unidentifiable"
-
-``` r
-unique(seabird_count$count)
-```
-
-    ##   [1] 133  60  NA   0   1  53  19 115   8   2  18  85 181 123  11  42 125  73
-    ##  [19]  24   4  33   9   6  90  79  49   3  15  99  76  10  45  28   5  54  40
-    ##  [37]  51  23  22  46  41  47  39  12  26 163 156  78  35  21   7 129  93  16
-    ##  [55] 103  68  14  34  61  29  96  63  20  64  58  56  13  27  17  32  25  30
-    ##  [73]  89  65 153  55  81  44 128 101  86 164 193  84  37  31 148  70 183  91
-    ##  [91]  38 135  36 142 114 143 157  92  75 100 160  74 107  66  77  48 151 140
-    ## [109] 112  95  72 174 141  87  43 225 127 122 108  94  69  59  67 218 126  82
-    ## [127]  57 104  52  50 118  71 177 117 113  62 106 206  80 138 159 102 187 145
-    ## [145]  98 231 147 158 262 172 162 188 173  83 134 110 120 310 304  97 154 197
-    ## [163] 239 202 116 121 124 249 234 176 161 192 132 137 139 109 196 155 185 149
-    ## [181] 258 111 152 167 263 261 373 341 130  88 136 246 169 279 213 228 267 240
-    ## [199] 214 395 293 221 285 245 217 191 178 296 294 215 195 168 184 227 223 272
-    ## [217] 250 186 226 222 252 248 180 170 105 150 229 201 182 144 392 216 244 290
-    ## [235] 146 254 194 256 328
-
-``` r
-unique(seabird_count$weather_obs)
-```
-
-    ##  [1] "clear"                          "mostly cloudy"                 
-    ##  [3] "overcast"                       "partly cloudy"                 
-    ##  [5] NA                               "cloudy"                        
-    ##  [7] "mostly sunny"                   "sunny"                         
-    ##  [9] "clear, runny"                   "sunny,"                        
-    ## [11] "clear, sunny"                   "sunny,  white caps present"    
-    ## [13] "foggy, low visability"          "sunny!!"                       
-    ## [15] "rainy"                          "mostly clear"                  
-    ## [17] "snow"                           "high clouds"                   
-    ## [19] "clody, breezy, waves 1-2 feet"  "sunny, breezy"                 
-    ## [21] "cloudy, breezy, waves 1-2 feet" "cloudy/rain"                   
-    ## [23] "hih clouds"                     "high overcast"                 
-    ## [25] "foggy"                          "high haze"                     
-    ## [27] "hazy"                           "fog"                           
-    ## [29] "low overcast"                   "cloufy"                        
-    ## [31] "cloud"                          "cloudy with drizzle"           
-    ## [33] "clouds"                         "few clouds"
 
 ``` r
 seabird_count_tidy %>%
-  # mutate(weather_obs = str_replace_all(weather_obs, "sunny white caps present", "sunny")) %>%
-  # mutate(weather_obs = str_replace(weather_obs, "cloudyy", "cloudy")) %>%
-  distinct(weather_obs)
+  distinct(wind_direction) 
 ```
 
-    ## # A tibble: 12 × 1
-    ##    weather_obs                   
-    ##    <chr>                         
-    ##  1 clear                         
-    ##  2 cloudy                        
-    ##  3 overcast                      
-    ##  4 partly cloudy                 
-    ##  5 <NA>                          
-    ##  6 sunny                         
-    ##  7 sunny  white caps present     
-    ##  8 fog                           
-    ##  9 rain                          
-    ## 10 snow                          
-    ## 11 cloudy, breezy, waves 1-2 feet
-    ## 12 cloudy/rain
+    ## # A tibble: 22 × 1
+    ##    wind_direction
+    ##    <chr>         
+    ##  1 w             
+    ##  2 nw            
+    ##  3 s             
+    ##  4 sw            
+    ##  5 ne            
+    ##  6 calm          
+    ##  7 n             
+    ##  8 wsw           
+    ##  9 e             
+    ## 10 ssw           
+    ## # ℹ 12 more rows
+
+``` r
+seabird_count_tidy %>% 
+  distinct(tide_obs)
+```
+
+    ## # A tibble: 6 × 1
+    ##   tide_obs
+    ##   <chr>   
+    ## 1 low     
+    ## 2 mid     
+    ## 3 high    
+    ## 4 <NA>    
+    ## 5 mlow    
+    ## 6 one low
 
 ## 3. Ethics review
 
-This research does not include people, so we are not concerned with an
-ethics review.
+Limitations in data sources: We don’t see there to be any bias in the
+data as it was lead by a known and trusted Professor and his team. There
+aren’t any large gaps in the birds data but sometimes weather and tides
+were missing. The data was originally quite messy but we have been
+cleaning it up and improving the quality. The only issue regarding team
+composition would be that the different people recording the data would
+input it in different formats making it harder for us to tidy.
+
+Positive effects on people: We will be positively affected by this
+project because this will help us further our understanding of coding
+and data science. The people working at the airport will be positively
+affected by this project because it will let them know whether or not
+there are birds at risk, and with the hopeful result of no negative
+trend in the bird populations, it will let them know that there have
+been no negative impacts on the birds. The people working the
+aquaculture farm will also be positively affected by this project,
+because hopefully the data will let them know that their farm has not
+led to an increase in bird deaths.
+
+We can communicate the positive impact by making sure that our data
+visualizations are clear, and then we can send the results of our
+project to John Anderson, and he can send it to the people he is
+collecting this data for. We can measure the positive impact by seeing
+if more aquaculture farms are put in place.
+
+Negative effects on people: There could be negative effects on the
+people running the aquaculture farm. If we find that the aquaculture
+farm led to an increase in bird populations, followed by a decrease in
+the bird populations, that could be due to bird deaths due to being so
+close to an airport. If this is the case, the people running the
+aquaculture farm may have to shut it down to stop the bird deaths.
+
+John Anderson, who has been collecting this data for them, has been
+communicating with them on a very regular basis about the findings of
+this data. They knew going into it that there was a chance that there
+could be negative effects on them if it was found that their aquaculture
+farm was having negative effects on the populations of birds nearby.
+
+Minimizing harm: If we see a pattern of bird gain then loss, it would be
+beneficial for us to report that to John because then he can bring that
+to the people running the aquaculture farm. This would reduce harm to
+the birds because they could take steps to limit the bird deaths. The
+only negative effect of this analysis would be the needed closing of the
+aquaculture farm if it is causing an increase of bird death and there is
+no way to lessen that however that question was the reason for the data
+collection.
 
 ## 4. Data analysis plan
 
