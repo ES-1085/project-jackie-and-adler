@@ -121,7 +121,7 @@ seabird_count_tidy <- seabird_count %>%
   mutate(tide_obs = str_replace(tide_obs, "threequarters", "high")) %>%
   mutate(tide_obs = str_replace(tide_obs, "med", "mid")) %>%
   mutate(tide_obs = str_replace(tide_obs, "mid-low", "low")) %>%
-  mutate(tide_obs = str_replace(tide_obs, "[one low mlow"], "low")) %>%
+  mutate(tide_obs = str_replace(tide_obs, "[one low mlow]", "low")) %>%
   mutate(tide_obs = str_replace(tide_obs, "one third", "low")) %>%
   mutate(tide_obs = str_replace(tide_obs, "quarter", "low")) %>%
   mutate(tide_obs = str_replace(tide_obs, "third", "low")) %>% 
@@ -167,10 +167,63 @@ seabird_count_tidy <- seabird_count %>%
   mutate(weather_obs = str_replace(weather_obs, "cloudy, breezy, waves 1-2 feet", "cloudy")) %>% 
   mutate(weather_obs = str_replace(weather_obs, "cloudy/rain", "rain"))
 
+
+# seabird_count_tidy %>%
+#  mutate(wind_speed_new = case_when(wind_speed))
+
+```
+
+```{r tidy_cont}
+
+seabird_count_tidy <- seabird_count_tidy %>%
+  mutate(wind_direction = case_when(wind_direction == "calm" ~ "0",
+                                    TRUE ~ wind_direction)) %>%
+  mutate(wind_speed = case_when(wind_speed == "calm" ~ "0",
+                                TRUE ~ wind_speed)) %>%
+  mutate(wind_speed = case_when(wind_speed == "15-20" ~ "17.5",
+                                TRUE ~ wind_speed)) %>%
+  mutate(wind_direction = case_when(wind_direction == "var" ~ NA, 
+                                    wind_direction == "sn" ~ NA, 
+                                    TRUE ~ wind_direction))
+
+seabird_count_tidy <- seabird_count_tidy %>%
+  mutate(wind_direction_new = case_when(str_starts(wind_direction, "n") == TRUE ~ wind_direction,
+                                        str_starts(wind_direction, "s") == TRUE ~ wind_direction,
+                                        str_starts(wind_direction, "w") == TRUE ~ wind_direction,
+                                        str_starts(wind_direction, "e") == TRUE ~ wind_direction,
+                                        str_starts(wind_speed, "n") == TRUE ~ wind_speed,
+                                        str_starts(wind_speed, "s") == TRUE ~ wind_speed,
+                                        str_starts(wind_speed, "w") == TRUE ~ wind_speed,
+                                        str_starts(wind_speed, "e") == TRUE ~ wind_speed)) %>%
+  mutate(wind_speed_new = case_when(str_starts(wind_direction, "0") == TRUE ~ wind_direction,
+                                        str_starts(wind_direction, "1") == TRUE ~ wind_direction,
+                                        str_starts(wind_direction, "2") == TRUE ~ wind_direction,
+                                        str_starts(wind_direction, "3") == TRUE ~ wind_direction,
+                                    str_starts(wind_direction, "4") == TRUE ~ wind_direction,
+                                    str_starts(wind_direction, "5") == TRUE ~ wind_direction,
+                                    str_starts(wind_direction, "6") == TRUE ~ wind_direction,
+                                    str_starts(wind_direction, "7") == TRUE ~ wind_direction,
+                                    str_starts(wind_direction, "8") == TRUE ~ wind_direction,
+                                    str_starts(wind_direction, "9") == TRUE ~ wind_direction,
+                                    str_starts(wind_speed, "0") == TRUE ~ wind_speed,
+                                        str_starts(wind_speed, "1") == TRUE ~ wind_speed,
+                                        str_starts(wind_speed, "2") == TRUE ~ wind_speed,
+                                        str_starts(wind_speed, "3") == TRUE ~ wind_speed,
+                                    str_starts(wind_speed, "4") == TRUE ~ wind_speed,
+                                    str_starts(wind_speed, "5") == TRUE ~ wind_speed,
+                                    str_starts(wind_speed, "6") == TRUE ~ wind_speed,
+                                    str_starts(wind_speed, "7") == TRUE ~ wind_speed,
+                                    str_starts(wind_speed, "8") == TRUE ~ wind_speed,
+                                    str_starts(wind_speed, "9") == TRUE ~ wind_speed)) %>%
+  select(-wind_speed, -wind_direction) %>%
+  mutate(wind_speed_new = as.numeric(wind_speed_new))
+
 ```
 
 ```{r glimpse}
 
+seabird_count %>%
+  distinct(wind_speed)
 
 seabird_count_tidy %>%
   distinct(wind_direction) 
@@ -178,6 +231,22 @@ seabird_count_tidy %>%
 ```{r}
 seabird_count_tidy %>% 
   distinct(tide_obs)
+
+```
+
+```{r}
+seabird_count %>%
+  distinct(wind_speed)
+```
+
+```{r}
+
+seabird_count_tidy %>%
+  distinct(wind_speed_new)
+
+seabird_count_tidy %>%
+  distinct(time)
+
 ```
 
 ## 3. Ethics review
