@@ -8,6 +8,7 @@ output: github_document
 library(tidyverse)
 library(broom)
 library(readxl)
+library(dplyr)
 ```
 
 ## 1. Introduction
@@ -95,86 +96,47 @@ mutate(across(total:unidentifiable, as.numeric)) %>%
 
 ```{r tidy_data}
 
-seabird_count2 <- seabird_count %>%
+seabird_count_tidy <- seabird_count %>%
   mutate(weather_obs_original = weather_obs) %>%
   mutate(weather_obs = case_when(str_detect(weather_obs, pattern = "clear|sunny") ~ "clear",
+                              str_detect(weather_obs, pattern = "driz|rain") ~ "rain",
+                              str_detect(weather_obs, pattern = "fog|haz") ~ "foggy",
+                              str_detect(weather_obs, pattern = "over") ~ "overcast",
                               str_detect(weather_obs, pattern = "clou|clod") ~ "cloudy",
                               TRUE ~ weather_obs)) %>%
+  mutate(tide_obs_original = tide_obs) %>% 
+  mutate(tide_obs = case_when(str_detect(tide_obs, pattern = "half|med") ~ "mid",
+                              str_detect(tide_obs, pattern = "hig|thre") ~ "high",
+                              str_detect(tide_obs, pattern = "low|one|thi|qua") ~ "low",
+                              TRUE ~ tide_obs)) %>% 
+  mutate(month = as.character(month)) %>% 
+  mutate(month_orginal = month) %>% 
+  mutate(month = case_when(str_detect(month, pattern = "12|1|2") ~ "winter",
+                           str_detect(month, pattern = "3|4|5") ~ "spring",
+                           str_detect(month, pattern = "6|7|8") ~ "summer",
+                           str_detect(month, pattern = "9|10|11") ~ "fall",
+                           TRUE ~ month)) %>% 
+  rename(season = month) %>% 
+  mutate(count_orginial = count) %>% 
+  mutate(count = ifelse(is.na(count), 0, count)) %>% 
+  
+  # ^creating a copy of the variable to save it, edited the original data to have correct labels 
   mutate(wind_direction_clean = case_when(wind_direction %in% c("5", "10", "15","calm") ~ wind_speed,
                                           TRUE ~ wind_direction)) %>%
   mutate(wind_speed_clean = case_when(wind_speed %in% c("n", "s", "e", "w", "sw", "nw", "ne") ~ wind_direction,
                                           TRUE ~ wind_speed)) 
-seabird_count2 %>%
-  relocate(weather_obs_original, .before = weather_obs) %>%
-  distinct(wind_speed_clean)
 
+  # ^wind direction and speed were switched for some observations: created a new variable for the case when in wind_direction certain observations were found and copied them to wind_speed and then in a new line doing the inverse to copy the wind_speed to wind_direction
 
-seabird_count_tidy <- seabird_count %>%
-  mutate(count = str_replace_na(count, "0")) %>%
-  mutate(count = as.double(count)) %>%
-  mutate(species = str_replace(species, "Surf Scoter", "surf_scoter")) %>%
-  mutate(tide_obs = str_replace(tide_obs, "half", "mid")) %>%
-  mutate(tide_obs = str_replace(tide_obs, "higgh", "high")) %>% 
-  mutate(tide_obs = str_replace(tide_obs, "hightide", "high")) %>% 
-  mutate(tide_obs = str_replace(tide_obs, "mid-high", "high")) %>%
-  mutate(tide_obs = str_replace(tide_obs, "thre quarters", "high")) %>%
-  mutate(tide_obs = str_replace(tide_obs, "three quarters", "high")) %>%
-  mutate(tide_obs = str_replace(tide_obs, "threequarters", "high")) %>%
-  mutate(tide_obs = str_replace(tide_obs, "med", "mid")) %>%
-  mutate(tide_obs = str_replace(tide_obs, "mid-low", "low")) %>%
-  mutate(tide_obs = str_replace(tide_obs, "one low", "low")) %>%
-  mutate(tide_obs = str_replace(tide_obs, "one third", "low")) %>%
-  mutate(tide_obs = str_replace(tide_obs, "quarter", "low")) %>%
-  mutate(tide_obs = str_replace(tide_obs, "third", "low")) %>% 
-  mutate(weather_obs = str_replace(weather_obs, "clear, runny", "clear")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "clear, sunny", "clear")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "sunny, whitecaps present", "clear")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "sunny, breezy", "clear")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "sunny!", "clear")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "few clouds", "clear")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "mosly clear", "clear")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "mostly sunny", "clear")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "clody, breezy, waves 1-2 feet", "cloudy")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "cloud", "cloudy")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "clouds", "cloudy")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "mostly cloudy", "cloudy")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "partly coudy", "cloudy")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "cloufy", "cloudy")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "high cloudy", "cloudy")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "hih clouds", "cloudy")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "foggy, low visability", "fog")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "hazy", "fog")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "high haze", "fog")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "high overcast", "overcast")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "low overcast", "overcast")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "cloudy w drizzle", "rain")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "cloudy / rain", "rain")) %>% 
-  mutate(weather_obs = str_replace(weather_obs, "cloudyy", "cloudy")) %>% 
-  mutate(weather_obs = str_replace(weather_obs, "partly cloudyy", "cloudy")) %>% 
-  mutate(weather_obs = str_replace(weather_obs, "sunny,", "sunny")) %>% 
-  mutate(weather_obs = str_replace(weather_obs, "sunny, white caps present", "sunny")) %>% 
-  mutate(weather_obs = str_replace(weather_obs, "clear!", "clear")) %>% 
-  mutate(weather_obs = str_replace(weather_obs, pattern = "[rainy|]", "rain")) %>% 
-  mutate(weather_obs = str_replace(weather_obs, "mostly clear", "clear")) %>% 
-  mutate(weather_obs = str_replace(weather_obs, "cloudys", "cloudy")) %>% 
-  mutate(weather_obs = str_replace(weather_obs, "cloudyy, breezy, waves 1-2 feet", "cloudy")) %>% 
-  mutate(weather_obs = str_replace(weather_obs, "cloudyy/rain", "cloudy")) %>% 
-  mutate(weather_obs = str_replace(weather_obs, "hih cloudy", "cloudy")) %>% 
-  mutate(weather_obs = str_replace(weather_obs, "foggy", "fog")) %>% 
-  mutate(weather_obs = str_replace(weather_obs, "cloudyy with drizzle	", "rain")) %>%
-  mutate(weather_obs = str_replace(weather_obs, "cloudyy", "cloudy")) %>% 
-  mutate(weather_obs = str_replace(weather_obs, "cloudy with drizzle", "cloudy")) %>% 
-  mutate(weather_obs = str_replace(weather_obs, "sunny  white caps present", "sunny")) %>% 
-  mutate(weather_obs = str_replace(weather_obs, "cloudy, breezy, waves 1-2 feet", "cloudy")) %>% 
-  mutate(weather_obs = str_replace(weather_obs, "cloudy/rain", "rain"))
-
+seabird_count_tidy %>%
+  relocate(month_orginal, .before = season) %>%
+  distinct(month_orginal,season)
 ```
 
 ```{r glimpse}
-
-
 seabird_count_tidy %>%
-  distinct(wind_direction) 
+  glimpse()
+  
 ```
 ```{r}
 seabird_count_tidy %>% 
