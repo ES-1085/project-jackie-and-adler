@@ -8,6 +8,7 @@ output: github_document
 library(tidyverse)
 library(broom)
 library(readxl)
+library(dplyr)
 ```
 
 ## 1. Introduction
@@ -95,17 +96,37 @@ mutate(across(total:unidentifiable, as.numeric)) %>%
 
 ```{r tidy_data}
 
-seabird_count %>%
+seabird_count_tidy <- seabird_count %>%
   mutate(weather_obs_original = weather_obs) %>%
   mutate(weather_obs = case_when(str_detect(weather_obs, pattern = "clear|sunny") ~ "clear",
+                              str_detect(weather_obs, pattern = "driz|rain") ~ "rain",
+                              str_detect(weather_obs, pattern = "fog|haz") ~ "foggy",
+                              str_detect(weather_obs, pattern = "over") ~ "overcast",
                               str_detect(weather_obs, pattern = "clou|clod") ~ "cloudy",
                               TRUE ~ weather_obs)) %>%
+  mutate(tide_obs_original = tide_obs) %>% 
+  mutate(tide_obs = case_when(str_detect(tide_obs, pattern = "half|med") ~ "mid",
+                              str_detect(tide_obs, pattern = "hig|thre") ~ "high",
+                              str_detect(tide_obs, pattern = "low|one|thi|qua") ~ "low",
+                              TRUE ~ tide_obs)) %>% 
+  mutate(month = as.character(month)) %>% 
+  mutate(month_orginal = month) %>% 
+  mutate(month = case_when(str_detect(month, pattern = "12|1|2") ~ "winter",
+                           str_detect(month, pattern = "3|4|5") ~ "spring",
+                           str_detect(month, pattern = "6|7|8") ~ "summer",
+                           str_detect(month, pattern = "9|10|11") ~ "fall",
+                           TRUE ~ month)) %>% 
+  rename(season = month) %>% 
+  mutate(count_orginial = count) %>% 
+  mutate(count = ifelse(is.na(count), 0, count)) %>% 
+  
+  # ^creating a copy of the variable to save it, edited the original data to have correct labels 
   mutate(wind_direction_clean = case_when(wind_direction %in% c("5", "10", "15","calm") ~ wind_speed,
                                           TRUE ~ wind_direction)) %>%
   mutate(wind_speed_clean = case_when(wind_speed %in% c("n", "s", "e", "w", "sw", "nw", "ne") ~ wind_direction,
                                           TRUE ~ wind_speed)) 
-  relocate(weather_obs_original, .before = weather_obs) %>%
-  distinct(wind_direction_clean)
+
+  # ^wind direction and speed were switched for some observations: created a new variable for the case when in wind_direction certain observations were found and copied them to wind_speed and then in a new line doing the inverse to copy the wind_speed to wind_direction
 
 
 seabird_count_tidy <- seabird_count %>%
@@ -222,11 +243,20 @@ seabird_count_tidy <- seabird_count_tidy %>%
 
 ```{r glimpse}
 
-seabird_count %>%
-  distinct(wind_speed)
+#seabird_count %>%
+ # distinct(wind_speed)
+
+
+# seabird_count_tidy %>%
+  # relocate(month_orginal, .before = season) %>%
+#  distinct(month_orginal,season)
+```
+
+```{r glimpse2}
 
 seabird_count_tidy %>%
-  distinct(wind_direction) 
+  glimpse()
+  
 ```
 ```{r}
 seabird_count_tidy %>% 
@@ -251,7 +281,18 @@ seabird_count_tidy %>%
 
 ## 3. Ethics review
 
-This research does not include people, so we are not concerned with an ethics review.
+Limitations in data sources: We don't see there to be any bias in the data as it was lead by a known and trusted Professor and his team. There aren't any large gaps in the birds data but sometimes weather and tides were missing. The data was originally quite messy but we have been cleaning it up and improving the quality. The only issue regarding team composition would be that the different people recording the data would input it in different formats making it harder for us to tidy. 
+
+Positive effects on people: We will be positively affected by this project because this will help us further our understanding of coding and data science. The people working at the airport will be positively affected by this project because it will let them know whether or not there are birds at risk, and with the hopeful result of no negative trend in the bird populations, it will let them know that there have been no negative impacts on the birds. The people working the aquaculture farm will also be positively affected by this project, because hopefully the data will let them know that their farm has not led to an increase in bird deaths. 
+
+We can communicate the positive impact by making sure that our data visualizations are clear, and then we can send the results of our project to John Anderson, and he can send it to the people he is collecting this data for. We can measure the positive impact by seeing if more aquaculture farms are put in place.
+
+Negative effects on people: There could be negative effects on the people running the aquaculture farm. If we find that the aquaculture farm led to an increase in bird populations, followed by a decrease in the bird populations, that could be due to bird deaths due to being so close to an airport. If this is the case, the people running the aquaculture farm may have to shut it down to stop the bird deaths. 
+
+John Anderson, who has been collecting this data for them, has been communicating with them on a very regular basis about the findings of this data. They knew going into it that there was a chance that there could be negative effects on them if it was found that their aquaculture farm was having negative effects on the populations of birds nearby. 
+
+Minimizing harm: If we see a pattern of bird gain then loss, it would be beneficial for us to report that to John because then he can bring that to the people running the aquaculture farm. This would reduce harm to the birds because they could take steps to limit the bird deaths. The only negative effect of this analysis would be the needed closing of the aquaculture farm if it is causing an increase of bird death and there is no way to lessen that however that question was the reason for the data collection. 
+
 
 ## 4. Data analysis plan
 
