@@ -241,6 +241,24 @@ seabird_count_tidy <- seabird_count_tidy %>%
 
 ```
 
+```{r tidy_time}
+
+seabird_count_tidy <- seabird_count_tidy %>%
+  mutate(time_of_day = case_when( time >= 530 & time <= 1159 ~ "morning",
+    time >= 1200 & time <= 1659 ~ "afternoon",
+    time >= 1700 & time <= 2029 ~ "evening",
+    time >= 2030 ~ "night",
+    time <= 530 ~ "night"))
+
+```
+
+```{r glimpse}
+
+seabird_count_tidy %>%
+  distinct(time)
+
+```
+
 ```{r glimpse}
 
 #seabird_count %>%
