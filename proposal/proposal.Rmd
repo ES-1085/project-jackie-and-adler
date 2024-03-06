@@ -97,6 +97,8 @@ mutate(across(total:unidentifiable, as.numeric)) %>%
 ```{r tidy_data}
 
 seabird_count_tidy <- seabird_count %>%
+  mutate(species = case_when(str_detect(species, pattern = "Surf Scoter") ~ "surf_scoter",
+                             TRUE ~ species)) %>%
   mutate(weather_obs_original = weather_obs) %>%
   mutate(weather_obs = case_when(str_detect(weather_obs, pattern = "clear|sunny") ~ "clear",
                               str_detect(weather_obs, pattern = "driz|rain") ~ "rain",
@@ -110,14 +112,14 @@ seabird_count_tidy <- seabird_count %>%
                               str_detect(tide_obs, pattern = "low|one|thi|qua") ~ "low",
                               TRUE ~ tide_obs)) %>% 
   mutate(month = as.character(month)) %>% 
-  mutate(month_orginal = month) %>% 
+  mutate(month_original = month) %>% 
   mutate(month = case_when(str_detect(month, pattern = "12|1|2") ~ "winter",
                            str_detect(month, pattern = "3|4|5") ~ "spring",
                            str_detect(month, pattern = "6|7|8") ~ "summer",
                            str_detect(month, pattern = "9|10|11") ~ "fall",
                            TRUE ~ month)) %>% 
   rename(season = month) %>% 
-  mutate(count_orginial = count) %>% 
+  mutate(count_original = count) %>% 
   mutate(count = ifelse(is.na(count), 0, count)) %>% 
   
   # ^creating a copy of the variable to save it, edited the original data to have correct labels 
@@ -218,7 +220,7 @@ seabird_count_tidy %>%
 ```
 ```{r}
 seabird_count_tidy %>% 
-  distinct(tide_obs)
+  distinct(species)
 
 ```
 
