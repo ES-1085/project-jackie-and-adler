@@ -59,3 +59,41 @@ seabird_count_tidy <- seabird_count %>%
   mutate(weather_obs = str_replace(weather_obs, "cloudy/rain", "rain"))
 ```
 
+```{r}
+seabird_count_tidy <- seabird_count %>%
+  mutate(weather_obs_original = weather_obs) %>%
+  mutate(weather_obs = case_when(str_detect(weather_obs, pattern = "clear|sunny") ~ "clear",
+                              str_detect(weather_obs, pattern = "driz|rain") ~ "rain",
+                              str_detect(weather_obs, pattern = "fog|haz") ~ "foggy",
+                              str_detect(weather_obs, pattern = "over") ~ "overcast",
+                              str_detect(weather_obs, pattern = "clou|clod") ~ "cloudy",
+                              TRUE ~ weather_obs)) %>%
+  mutate(tide_obs_original = tide_obs) %>% 
+  mutate(tide_obs = case_when(str_detect(tide_obs, pattern = "half|med") ~ "mid",
+                              str_detect(tide_obs, pattern = "hig|thre") ~ "high",
+                              str_detect(tide_obs, pattern = "low|one|thi|qua") ~ "low",
+                              TRUE ~ tide_obs)) %>% 
+  mutate(month = as.character(month)) %>% 
+  mutate(month_orginal = month) %>% 
+  mutate(month = case_when(str_detect(month, pattern = "12|1|2") ~ "winter",
+                           str_detect(month, pattern = "3|4|5") ~ "spring",
+                           str_detect(month, pattern = "6|7|8") ~ "summer",
+                           str_detect(month, pattern = "9|10|11") ~ "fall",
+                           TRUE ~ month)) %>% 
+  rename(season = month) %>% 
+  mutate(count_orginial = count) %>% 
+  mutate(count = ifelse(is.na(count), 0, count)) %>% 
+  
+  # ^creating a copy of the variable to save it, edited the original data to have correct labels 
+  mutate(wind_direction_clean = case_when(wind_direction %in% c("5", "10", "15","calm") ~ wind_speed,
+                                          TRUE ~ wind_direction)) %>%
+  mutate(wind_speed_clean = case_when(wind_speed %in% c("n", "s", "e", "w", "sw", "nw", "ne") ~ wind_direction,
+                                          TRUE ~ wind_speed)) 
+
+  # ^wind direction and speed were switched for some observations: created a new variable for the case when in wind_direction certain observations were found and copied them to wind_speed and then in a new line doing the inverse to copy the wind_speed to wind_direction
+
+seabird_count_tidy %>%
+  relocate(month_orginal, .before = season) %>%
+  distinct(month_orginal,season)
+```
+
