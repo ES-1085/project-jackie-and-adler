@@ -194,10 +194,49 @@ seabird_count_tidy <- seabird_count_tidy %>%
 
 ```
 
-```{r}
+```{r new_species_group_column}
 
-seabird_count_tidy %>%
-  mutate(species_group)
+seabird_count_tidy <- seabird_count_tidy %>%
+  mutate(species_group = case_when(species == "herring_gull" ~ "gull",
+                                   species == "laughing_gull" ~ "gull",
+                                   species == "great_black_backed_gull" ~ "gull",
+                                   species == "bonapartes_gull" ~ "gull",
+                                   species == "ring_billed_gull" ~ "gull",
+                                   species == "red_throated_loon" ~ "loon",
+                                   species == "common_loon" ~ "loon",
+                                   species == "long_tailed_duck" ~ "duck",
+                                   species == "red_breasted_merganser" ~ "duck",
+                                   species == "common_merganser" ~ "duck",
+                                   species == "black_duck" ~ "duck",
+                                   species == "surf_scoter" ~ "duck",
+                                   species == "common_eider" ~ "duck",
+                                   species == "bufflehead" ~ "duck",
+                                   species == "goldeneye" ~ "duck",
+                                   species == "lesser_scaup" ~ "duck",
+                                   species == "black_scoter" ~ "duck",
+                                   species == "mallard_duck" ~ "duck",
+                                   species == "unidentifiable_duck" ~ "duck",
+                                   species == "common_crow" ~ "gen_non_waterbird",
+                                   species == "belted_kingfisher" ~ "gen_non_waterbird", 
+                                   species == "osprey" ~ "gen_non_waterbird",
+                                   species == "bald_eagle" ~ "gen_non_waterbird",
+                                   species == "red_tailed_hawk" ~ "gen_non_waterbird",
+                                   species == "turkey_vulture" ~ "gen_non_waterbird",
+                                   species == "rough_legged_hawk" ~ "gen_non_waterbird",
+                                   species == "harrier" ~ "gen_non_waterbird",
+                                   species == "kestrel" ~ "gen_non_waterbird",
+                                   species == "turkey" ~ "gen_non_waterbird",
+                                   species == "common_tern" ~ "gen_waterbird", 
+                                   species == "canada_goose" ~ "gen_waterbird", 
+                                   species == "great_blue_heron" ~ "gen_waterbird",
+                                   species == "double_crested_cormorant" ~ "gen_waterbird",
+                                   species == "black_guillemot" ~ "gen_waterbird",
+                                   species == "spotted_sandpiper" ~ "shorebird",
+                                   species == "semipalmated_plover" ~ "shorebird",
+                                   species == "horned_grebe" ~ "grebe",
+                                   species == "red_necked_grebe" ~ "grebe",
+                                   species == "white_winged_scoter" ~ "duck"
+                                   ))
 
 ```
 
@@ -205,46 +244,16 @@ seabird_count_tidy %>%
 ```{r glimpse}
 
 seabird_count_tidy %>%
-  distinct(date) %>% 
-  arrange(date)
+  distinct(species_group)
 
 ```
 
-```{r glimpse}
+```{r test_species_group_plot}
 
-#seabird_count %>%
- # distinct(wind_speed)
+ ggplot(seabird_count_tidy, aes(x = species_group)) + 
+  geom_bar() +
+  facet_wrap(~ year)
 
-
-# seabird_count_tidy %>%
-  # relocate(month_orginal, .before = season) %>%
-#  distinct(month_orginal,season)
-```
-
-```{r glimpse2}
-
-seabird_count_tidy %>%
-  glimpse()
-  
-```
-```{r}
-seabird_count_tidy %>% 
-  distinct(species)
-
-```
-
-```{r}
-seabird_count %>%
-  distinct(wind_speed)
-```
-
-```{r}
-
-seabird_count_tidy %>%
-  distinct(wind_speed_new)
-
-seabird_count_tidy %>%
-  distinct(time)
 
 ```
 
