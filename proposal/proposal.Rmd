@@ -194,6 +194,14 @@ seabird_count_tidy <- seabird_count_tidy %>%
 
 ```
 
+```{r}
+
+seabird_count_tidy %>%
+  mutate(species_group)
+
+```
+
+
 ```{r glimpse}
 
 seabird_count_tidy %>%
