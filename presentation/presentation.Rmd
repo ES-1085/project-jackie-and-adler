@@ -31,14 +31,12 @@ knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618,
 ```{r load-data, include=FALSE}
 # Load your data here
 
-view(seabird_count_tidy)
+#view(seabird_count_tidy)
 
 ```
 
 ```{r}
-style_xaringan(
-  title_slide_background_image = "img/confetti.jpg"
-)
+seabird_count_tidy <- read_csv("../data/seabird_count_tidy.csv")
 ```
 
 
@@ -151,9 +149,20 @@ ggplot(seabird_time_of_day_count, aes(x = time_of_day)) +
 
 
 
-```{r}
+```{r species_diversity_over_time}
 seabird_count_tidy %>% 
-  distinct(date, time_of_day)
+  ggplot(aes())
+```
+```{r bird_spotting_condition}
+
+```
+
+```{r plot_wind_speed_direction}
+
+```
+
+```{r species_present_together}
+
 ```
 
 ---
@@ -168,9 +177,7 @@ seabird_count_tidy %>%
 ```{r warning=FALSE, out.width="100%", fig.width=4, echo=FALSE}
 # see how I changed out.width and fig.width from defaults
 # to make the figure bigger
-ggplot(penguins, aes(x = bill_length_mm, y = species, color = species)) +
-  geom_boxplot() +
-  theme_minimal()
+
 ```
 ]
 
@@ -181,7 +188,7 @@ ggplot(penguins, aes(x = bill_length_mm, y = species, color = species)) +
 If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
 
 ```{r iris-table, echo = FALSE}
-kable(head(iris), format = "html")
+
 ```
 
 ---
@@ -189,7 +196,7 @@ kable(head(iris), format = "html")
 # Images
 
 ```{r castle, echo = FALSE, out.width = "60%", fig.align = "center", fig.cap = "Image credit: Photo by Jörg Angeli on Unsplash."}
-include_graphics("https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80")
+#include_graphics("https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80")
 ```
 
 Or you can also include a full page image. See next slide.

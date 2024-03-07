@@ -240,6 +240,10 @@ seabird_count_tidy <- seabird_count_tidy %>%
 
 ```
 
+```{r}
+write_csv(seabird_count_tidy, file = "../data/seabird_count_tidy.csv")
+```
+
 
 ```{r glimpse}
 
