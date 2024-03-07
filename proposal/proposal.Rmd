@@ -205,7 +205,8 @@ seabird_count_tidy %>%
 ```{r glimpse}
 
 seabird_count_tidy %>%
-  distinct(time)
+  distinct(date) %>% 
+  arrange(date)
 
 ```
 
