@@ -149,10 +149,23 @@ ggplot(seabird_time_of_day_count, aes(x = time_of_day)) +
 
 
 
-```{r species_diversity_over_time}
-seabird_count_tidy %>% 
-  ggplot(aes())
+```{r species_diversity_over_time_plot}
+ seabird_count_tidy %>% 
+  filter(!is.na(species_group)) %>% 
+  ggplot(aes(x = year, y = count, color = species_group)) +
+  geom_point(alpha = 0.75)
 ```
+```{r species_diversity_over_time_jitter_plot, fig.alt= "Jitter plot of the total amount of birds over nine years seperated by the species group, duck, gen_non_waterbird, gen_waterbird, grebe, gull, loon, and shorebird. This chart shows that the number of gull has increased thoughout the years dramatically going from around 90 to around 150 spotted at a time, at some points reaching over 300. Ducks and gen_waterbird increase less significantly going from around 20 to around 50 and 50 to 100 respeticvely, over the nine years. The rest don't show much change and have low numbers."}
+ seabird_count_tidy %>% 
+  filter(!is.na(species_group), count > 0, year > 14, year < 24) %>% 
+  ggplot(aes(x = year, y = count, color = species_group)) +
+  geom_jitter(alpha = 0.75) +
+  theme_linedraw() +
+  scale_color_viridis_d() + 
+  labs(title = "Total Amount of Birds Over Nine Years", subtitle = "2015-2023", x = "Year", y = "Total Number of Individual", color = "Species Group") +
+  scale_x_continuous(breaks = seq(15, 23, by = 1))
+```
+
 ```{r bird_spotting_condition}
 
 ```
