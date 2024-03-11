@@ -21,6 +21,7 @@ library(tidyverse)
 library(broom)
 library(readxl)
 library(dplyr)
+install.packages("ggridges")
 library(ggridges)
 ```
 
@@ -188,10 +189,31 @@ seabird_count_tidy %>%
 
 ```{r plot_wind_speed_direction}
 
+seabird_count_tidy %>%
+  distinct(wind_direction_new)
+
+seabird_count_tidy %>%
+  filter(species == "total") %>%
+  filter(is.na(wind_direction_new) == FALSE) %>% 
+  ggplot(aes(x = wind_direction_new, y = count)) + 
+  geom_col()
+
+
+seabird_count_tidy %>%
+  filter(species == "total") %>%
+  ggplot(aes(x = wind_speed_new, y = count, colour = wind_speed_new)) + 
+  geom_jitter(width = 1.3, alpha = 0.9) +
+  geom_smooth(method = "lm")
+
+
 ```
 
 ```{r species_present_together}
 
+canada_geese <- seabird_count_tidy %>% 
+  filter(species == "canada_goose")
+
+sum(canada_geese$count)
 ```
 
 ---
