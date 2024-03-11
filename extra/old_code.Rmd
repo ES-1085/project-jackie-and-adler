@@ -97,3 +97,63 @@ seabird_count_tidy %>%
   distinct(month_orginal,season)
 ```
 
+
+```{r seabirds_present_together_data_please}
+
+
+seabird_species_count_attempt <- 
+  seabird_count_tidy %>%
+  select(date, year, species_group, count)
+
+seabird_species_count_attempt <- seabird_species_count_attempt %>%
+  group_by(date) %>%
+  mutate(row = row_number()) %>%
+  pivot_wider(
+    names_from = species_group,
+    values_from = count
+  )
+
+seabird_species_count_attempt <- seabird_species_count_attempt %>%
+  group_by(date, year) %>%
+  filter(year > 14, year < 24) %>%
+  mutate(gull = ifelse(is.na(gull), 0, gull),
+         loon = ifelse(is.na(loon), 0, loon),
+         duck = ifelse(is.na(duck), 0, duck),
+         grebe = ifelse(is.na(grebe), 0, grebe),
+         gen_non_waterbird = ifelse(is.na(gen_non_waterbird), 0, gen_non_waterbird),
+         gen_waterbird = ifelse(is.na(gen_waterbird), 0, gen_waterbird),
+         shorebird = ifelse(is.na(shorebird), 0, shorebird)) %>%
+  summarize(gull_math = sum(gull), loon_math = sum(loon), duck_math = sum(duck), grebe_math = sum(grebe), gen_non_waterbird_math = sum(gen_non_waterbird), gen_waterbird_math = sum(gen_waterbird), shorebird_math = sum(shorebird))
+
+seabird_species_count_attempt <- seabird_species_count_attempt %>%
+  mutate(gull_math = case_when(gull_math >= 1 ~ 1,
+                               gull_math <= 1 ~ 0)) %>%
+  mutate(loon_math = case_when(loon_math >= 1 ~ 1,
+                               loon_math <= 1 ~ 0)) %>%
+  mutate(duck_math = case_when(duck_math >= 1 ~ 1,
+                               duck_math <= 1 ~ 0)) %>%
+  mutate(grebe_math = case_when(grebe_math >= 1 ~ 1,
+                               grebe_math <= 1 ~ 0)) %>%
+  mutate(gen_non_waterbird_math = case_when(gen_non_waterbird_math >= 1 ~ 1,
+                               gen_non_waterbird_math <= 1 ~ 0)) %>%
+  mutate(gen_waterbird_math = case_when(gen_waterbird_math >= 1 ~ 1,
+                               gen_waterbird_math <= 1 ~ 0)) %>%
+  mutate(shorebird_math = case_when(shorebird_math >= 1 ~ 1,
+                               shorebird_math <= 1 ~ 0))
+
+
+
+
+# seabird_species_count_attempt %>%
+  #mutate(across(loon_math:shorebird_math, as.numeric)) %>%
+  #pivot_longer(
+  #  cols = loon_math:shorebird_math,
+  #  names_to = "species_group",
+  #  values_to = "count") %>%
+  #ggplot(aes(x = gull_math)) +
+  #geom_histogram()
+  
+
+```
+
+

@@ -1,7 +1,7 @@
 ---
-title: "Presentation title"
+title: "Seabirds at Acadia Aquafarms"
 subtitle: "Presentation subtitle (if any)"
-author: "Team name <br> 2"
+author: "Jackie Brooks and Adler Garner"
 institute: "College of the Atlantic"
 date: "`r Sys.Date()`"
 output:
@@ -41,65 +41,6 @@ knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618,
 seabird_count_tidy <- read_csv("../data/seabird_count_tidy.csv")
 ```
 
-
-class: center, middle
-
-## A statement of the overall goal / research question
-
----
-
-class: inverse, center, middle
-
-# Section title
-
----
-
-# Hello World
-
-- Click the `Knit` button to compile your presentation
-
-- Make sure to commit and push all resulting files to your GitHub repo
-
----
-
-class: inverse, middle, center
-
-# Using xaringan
-
----
-
-# xaringan
-
-- The presentation is created using the `xaringan` package
-
-- Use `---` to separate slides and `--` for incremental builds
-
---
-
-- Like this
-
----
-
-# Layouts
-
-You can use plain text
-
-- or bullet points
-
-.pull-left[
-or text in two columns $^*$
-]
-.pull-right[
-- like
-- this
-]
-
-.footnote[
-[*] And add footnotes
-]
-
----
-
 # Code
 
 ```{r boring-regression}
@@ -134,15 +75,9 @@ seabird_count_tidy |> filter(year %in% c(15, 16, 17, 18, 19, 20, 21, 22, 23)) %>
   labs(title = "Total Number of Birds Present at Different Tide Levels", subtitle = "Seperated by Year Over Nine Years 2015-2023", x = "Tide Observation", y = "Number of Birds ")
 
 ```
-```{r}
-
-ggplot(seabird_count_tidy, aes(x = time_of_day)) +
-  geom_bar()
-
-```
 
 
-```{r plot-iris, echo = FALSE}
+```{r observation_time_of_day, echo = FALSE}
 seabird_time_of_day_count <- seabird_count_tidy %>% 
   distinct(date, time_of_day) %>% 
   mutate(year = str_sub(date, 1, 4)) %>% 
@@ -196,7 +131,7 @@ seabird_count_tidy %>%
   
 ```
 
-```{r plot_species_count_and_wind_direction, fig.alt = "Bar plot of the number of birds recorded in a day and the recorded wind direction. Between the four main cardinal directions (north, south, east, and west), there are more birds seen when the wind is blowing south or west than north or east."}
+```{r species_count_vs_wind_direction_plot, fig.alt = "Bar plot of the number of birds recorded in a day and the recorded wind direction. Between the four main cardinal directions (north, south, east, and west), there are more birds seen when the wind is blowing south or west than north or east."}
 
 seabird_count_tidy %>%
   filter(species == "total") %>%
@@ -210,7 +145,7 @@ seabird_count_tidy %>%
 
 ```
 
-```{r plot_species_count_and_wind_direction_by_wind_speed, fig.alt = "Segmented bar plot of the number of birds recorded in a day and the recorded wind direction, coloured by the recorded wind speed in MPH. Between the four main cardinal directions (north, south, east, and west), there are more birds seen when the wind is blowing south or west than north or east. In terms of wind speed, there seem to me the most birds present at wind speeds between 5 and 15 MPH."}
+```{r species_count_vs_wind_direction_by_wind_speed_plot, fig.alt = "Segmented bar plot of the number of birds recorded in a day and the recorded wind direction, coloured by the recorded wind speed in MPH. Between the four main cardinal directions (north, south, east, and west), there are more birds seen when the wind is blowing south or west than north or east. In terms of wind speed, there seem to me the most birds present at wind speeds between 5 and 15 MPH."}
 
 seabird_count_tidy <- seabird_count_tidy %>%
   mutate(wind_speed_group = case_when(wind_speed_new >= 0 & wind_speed_new <= 4.9 ~ "0 - 4.9",
@@ -233,7 +168,7 @@ seabird_count_tidy %>%
 
 ```
 
-```{r plot_species_count_and_wind_speed, fit.alt = "Jitter plot of the number of birds recorded in a day and the recorded wind speed (in MPH). According to the graph, there appear to be a higher frequency of birds present at wind speeds below 15 MPH."}
+```{r species_count_and_wind_speed_plot, fit.alt = "Jitter plot of the number of birds recorded in a day and the recorded wind speed (in MPH). According to the graph, there appear to be a higher frequency of birds present at wind speeds below 15 MPH."}
 
 seabird_count_tidy %>%
   filter(species == "total") %>%
@@ -247,102 +182,6 @@ seabird_count_tidy %>%
 
 ```
 
-```{r species_present_together_data_wrangling}
-
-seabird_species_count_attempt <- 
-  seabird_count_tidy %>%
-  select(date, year, species_group, count)
-
-seabird_species_count_attempt <- seabird_species_count_attempt %>%
-  group_by(date) %>%
-  mutate(row = row_number()) %>%
-  pivot_wider(
-    names_from = species_group,
-    values_from = count
-  )
-
-seabird_species_count_attempt <- seabird_species_count_attempt %>%
-  group_by(date, year) %>%
-  filter(year > 14, year < 24) %>%
-  mutate(gull = ifelse(is.na(gull), 0, gull),
-         loon = ifelse(is.na(loon), 0, loon),
-         duck = ifelse(is.na(duck), 0, duck),
-         grebe = ifelse(is.na(grebe), 0, grebe),
-         gen_non_waterbird = ifelse(is.na(gen_non_waterbird), 0, gen_non_waterbird),
-         gen_waterbird = ifelse(is.na(gen_waterbird), 0, gen_waterbird),
-         shorebird = ifelse(is.na(shorebird), 0, shorebird)) %>%
-  summarize(gull_math = sum(gull), loon_math = sum(loon), duck_math = sum(duck), grebe_math = sum(grebe), gen_non_waterbird_math = sum(gen_non_waterbird), gen_waterbird_math = sum(gen_waterbird), shorebird_math = sum(shorebird))
-
-seabird_species_count_attempt <- seabird_species_count_attempt %>%
-  mutate(gull_math = case_when(gull_math >= 1 ~ 1,
-                               gull_math <= 1 ~ 0)) %>%
-  mutate(loon_math = case_when(loon_math >= 1 ~ 1,
-                               loon_math <= 1 ~ 0)) %>%
-  mutate(duck_math = case_when(duck_math >= 1 ~ 1,
-                               duck_math <= 1 ~ 0)) %>%
-  mutate(grebe_math = case_when(grebe_math >= 1 ~ 1,
-                               grebe_math <= 1 ~ 0)) %>%
-  mutate(gen_non_waterbird_math = case_when(gen_non_waterbird_math >= 1 ~ 1,
-                               gen_non_waterbird_math <= 1 ~ 0)) %>%
-  mutate(gen_waterbird_math = case_when(gen_waterbird_math >= 1 ~ 1,
-                               gen_waterbird_math <= 1 ~ 0)) %>%
-  mutate(shorebird_math = case_when(shorebird_math >= 1 ~ 1,
-                               shorebird_math <= 1 ~ 0))
-
-```
-
-
-```{r species_present_together}
-
-seabird_species_count_attempt %>%
-  mutate(across(loon_math:shorebird_math, as.numeric)) %>%
-  pivot_longer(
-    cols = loon_math:shorebird_math,
-    names_to = "species_group",
-    values_to = "count") %>%
-  ggplot(aes(x = gull_math, y = count)) +
-  geom_histogram()
-  
-
-```
-
-```{r saving_content}
-
-seabird_species_count_attempt %>%
-mutate(across(laughing_gull:unidentifiable, as.numeric)) %>%
-  pivot_longer(
-    cols = laughing_gull:unidentifiable,
-      names_to = "species",
-   values_to = "count") %>%
-  ggplot(aes(x = herring_gull, y = count, colour = species)) + 
-           geom_col()
-
-
-
-seabird_species_count_attempt <- 
-  seabird_count_tidy %>%
-  select(date, year, species_group, count)
-
-
-seabird_species_count_attempt %>%
-  group_by(species_group) %>%
-  mutate(row = row_number()) %>%
-  pivot_wider(
-    names_from = species_group,
-    values_from = count)
-
-
-  
-  
-#  filter(is.na(herring_gull) == FALSE)
-
-ggplot(seabird_species_count_attempt, aes(x = herring_gull, y = laughing_gull)) +
-  geom_point()
-
-
-
-```
-
 ```{r number_of_geese_at_goose_cove}
 canada_geese <- seabird_count_tidy %>% 
   filter(species == "canada_goose")
@@ -350,75 +189,4 @@ canada_geese <- seabird_count_tidy %>%
 sum(canada_geese$count)
 ```
 
----
 
-## Plot and text
-
-.pull-left[
-- Some text
-- goes here
-]
-.pull-right[
-```{r warning=FALSE, out.width="100%", fig.width=4, echo=FALSE}
-# see how I changed out.width and fig.width from defaults
-# to make the figure bigger
-
-```
-]
-
----
-
-# Tables
-
-If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
-
-```{r iris-table, echo = FALSE}
-
-```
-
----
-
-# Images
-
-```{r castle, echo = FALSE, out.width = "60%", fig.align = "center", fig.cap = "Image credit: Photo by Jörg Angeli on Unsplash."}
-#include_graphics("https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80")
-```
-
-Or you can also include a full page image. See next slide.
-
----
-
-background-image: url(https://images.unsplash.com/photo-1535448033526-c0e85c9e6968?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80)
-
----
-
-# Math Expressions
-
-You can write LaTeX math expressions inside a pair of dollar signs, e.g. &#36;\alpha+\beta$ renders $\alpha+\beta$. You can use the display style with double dollar signs:
-
-```
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
-```
-
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
-
-Limitations:
-
-1. The source code of a LaTeX math expression must be in one line, unless it is inside a pair of double dollar signs, in which case the starting `$$` must appear in the very beginning of a line, followed immediately by a non-space character, and the ending `$$` must be at the end of a line, led by a non-space character;
-
-1. There should not be spaces after the opening `$` or before the closing `$`.
-
-1. Math does not work on the title slide (see [#61](https://github.com/yihui/xaringan/issues/61) for a workaround).
-
----
-
-# Feeling adventurous?
-
-- Want to find out more about `xaringan`? See https://slides.yihui.name/xaringan/#1.
-
-- You are welcomed to use the default styling of the slides. In fact, that's what I expect majority of you will do. You will differentiate yourself with the content of your presentation.
-
-- But some of you might want to play around with slide styling. The 
-`xaringanthemer` provides some solutions for this that: https://pkg.garrickadenbuie.com/xaringanthemer.
-
-- And if you want more bells and whistles, there is also `xaringanExtra`: https://pkg.garrickadenbuie.com/xaringanExtra.
