@@ -181,7 +181,23 @@ seabird_count_tidy <- seabird_count_tidy %>%
   select(-wind_speed, -wind_direction) %>%
   mutate(wind_speed_new = as.numeric(wind_speed_new))
 
+
 ```
+
+```{r rename_old_wind_direction_column}
+
+seabird_count_tidy <- seabird_count_tidy %>%
+  rename(wind_direction_old = wind_direction_clean)
+
+```
+
+```{r rename_old_wind_speed_column}
+
+seabird_count_tidy <- seabird_count_tidy %>%
+  rename(wind_speed_old = wind_speed_clean)
+
+```
+
 
 ```{r tidy_time}
 
