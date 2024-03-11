@@ -37,7 +37,7 @@ knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618,
 
 ```
 
-```{r}
+```{r read_in_data}
 seabird_count_tidy <- read_csv("../data/seabird_count_tidy.csv")
 ```
 
@@ -146,9 +146,14 @@ seabird_time_of_day_count <- seabird_count_tidy %>%
   mutate(year = str_sub(date, 1, 4)) %>% 
   filter(year %in% c(2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023)) 
   
-
-ggplot(seabird_time_of_day_count, aes(x = time_of_day)) + 
+seabird_time_of_day_count %>%
+  filter(year > 14, year < 24) %>%
+ggplot(aes(x = time_of_day, fill = time_of_day)) + 
      geom_bar() + 
+  labs(x = "Time of Day", y = "Number of Observations", title = "Number of Observations Done at Different Times of the Day", subtitle = "2015 - 2023", fill = "Time of Day") +
+  theme_linedraw() +
+  theme(axis.text.x = element_blank()) +
+  scale_fill_viridis_d() +
   facet_wrap(~ year)
 ```
 
@@ -164,6 +169,7 @@ ggplot(seabird_time_of_day_count, aes(x = time_of_day)) +
   labs(title = "Total Amount of Birds Over Nine Years", subtitle = "2015-2023", x = "Year", y = "Total Number of Individual", color = "Species Group") +
   scale_x_continuous(breaks = seq(15, 23, by = 1))
 ```
+
 ```{r species_diversity_over_time_jitter_plot, fig.alt = "Jitter plot of the total amount of birds over nine years seperated by the species group, duck, gen_non_waterbird, gen_waterbird, grebe, gull, loon, and shorebird. This chart shows that the number of gull has increased thoughout the years dramatically going from around 90 to around 150 spotted at a time, at some points reaching over 300. Ducks and gen_waterbird increase less significantly going from around 20 to around 50 and 50 to 100 respeticvely, over the nine years. The rest don't show much change and have low numbers."}
  seabird_count_tidy %>% 
   filter(!is.na(species_group), count > 0, year > 14, year < 24) %>% 
@@ -195,7 +201,7 @@ seabird_count_tidy %>%
   filter(year > 14, year < 24) %>%
   ggplot(aes(x = wind_direction_new, y = count, fill = wind_direction_new)) + 
   geom_col() +
-  scale_fill_viridis_d(option = "turbo") +
+  scale_fill_viridis_d() +
   labs(x = "Wind Direction", y = "Number of Birds", title = "Number of Birds per Day by Wind Direction", fill = "Wind Direction", subtitle = "2015 - 2023") +
   theme_linedraw()
 
@@ -218,11 +224,12 @@ seabird_count_tidy %>%
   filter(year > 14, year < 24) %>%
   ggplot(aes(x = wind_direction_new, y = count, fill = wind_speed_group)) + 
   geom_col() +
-  scale_fill_viridis_d(option = "turbo") +
+  scale_fill_viridis_d() +
   labs(x = "Wind Direction", y = "Number of Birds", title = "Number of Birds per Day by Wind Direction", fill = "Wind Speed (mph)", subtitle = "2015 - 2023") +
   theme_linedraw()
 
 ```
+
 ```{r plot_species_count_and_wind_speed, fit.alt = "Jitter plot of the number of birds recorded in a day and the recorded wind speed (in MPH). According to the graph, there appear to be a higher frequency of birds present at wind speeds below 15 MPH."}
 
 seabird_count_tidy %>%
@@ -237,12 +244,101 @@ seabird_count_tidy %>%
 
 ```
 
+```{r species_present_together_data_wrangling}
 
-```{r species_present_together}
+seabird_species_count_attempt <- 
+  seabird_count_tidy %>%
+  select(date, year, species_group, count)
 
+seabird_species_count_attempt <- seabird_species_count_attempt %>%
+  group_by(date) %>%
+  mutate(row = row_number()) %>%
+  pivot_wider(
+    names_from = species_group,
+    values_from = count
+  )
+
+seabird_species_count_attempt <- seabird_species_count_attempt %>%
+  group_by(date, year) %>%
+  filter(year > 14, year < 24) %>%
+  mutate(gull = ifelse(is.na(gull), 0, gull),
+         loon = ifelse(is.na(loon), 0, loon),
+         duck = ifelse(is.na(duck), 0, duck),
+         grebe = ifelse(is.na(grebe), 0, grebe),
+         gen_non_waterbird = ifelse(is.na(gen_non_waterbird), 0, gen_non_waterbird),
+         gen_waterbird = ifelse(is.na(gen_waterbird), 0, gen_waterbird),
+         shorebird = ifelse(is.na(shorebird), 0, shorebird)) %>%
+  summarize(gull_math = sum(gull), loon_math = sum(loon), duck_math = sum(duck), grebe_math = sum(grebe), gen_non_waterbird_math = sum(gen_non_waterbird), gen_waterbird_math = sum(gen_waterbird), shorebird_math = sum(shorebird))
+
+seabird_species_count_attempt <- seabird_species_count_attempt %>%
+  mutate(gull_math = case_when(gull_math >= 1 ~ 1,
+                               gull_math <= 1 ~ 0)) %>%
+  mutate(loon_math = case_when(loon_math >= 1 ~ 1,
+                               loon_math <= 1 ~ 0)) %>%
+  mutate(duck_math = case_when(duck_math >= 1 ~ 1,
+                               duck_math <= 1 ~ 0)) %>%
+  mutate(grebe_math = case_when(grebe_math >= 1 ~ 1,
+                               grebe_math <= 1 ~ 0)) %>%
+  mutate(gen_non_waterbird_math = case_when(gen_non_waterbird_math >= 1 ~ 1,
+                               gen_non_waterbird_math <= 1 ~ 0)) %>%
+  mutate(gen_waterbird_math = case_when(gen_waterbird_math >= 1 ~ 1,
+                               gen_waterbird_math <= 1 ~ 0)) %>%
+  mutate(shorebird_math = case_when(shorebird_math >= 1 ~ 1,
+                               shorebird_math <= 1 ~ 0))
 
 ```
 
+
+```{r species_present_together}
+
+seabird_species_count_attempt %>%
+  mutate(across(loon_math:shorebird_math, as.numeric)) %>%
+  pivot_longer(
+    cols = loon_math:shorebird_math,
+    names_to = "species_group",
+    values_to = "count") %>%
+  ggplot(aes(x = gull_math, y = count)) +
+  geom_histogram()
+  
+
+```
+
+```{r saving_content}
+
+seabird_species_count_attempt %>%
+mutate(across(laughing_gull:unidentifiable, as.numeric)) %>%
+  pivot_longer(
+    cols = laughing_gull:unidentifiable,
+      names_to = "species",
+   values_to = "count") %>%
+  ggplot(aes(x = herring_gull, y = count, colour = species)) + 
+           geom_col()
+
+
+
+seabird_species_count_attempt <- 
+  seabird_count_tidy %>%
+  select(date, year, species_group, count)
+
+
+seabird_species_count_attempt %>%
+  group_by(species_group) %>%
+  mutate(row = row_number()) %>%
+  pivot_wider(
+    names_from = species_group,
+    values_from = count)
+
+
+  
+  
+#  filter(is.na(herring_gull) == FALSE)
+
+ggplot(seabird_species_count_attempt, aes(x = herring_gull, y = laughing_gull)) +
+  geom_point()
+
+
+
+```
 
 ```{r number_of_geese_at_goose_cove}
 canada_geese <- seabird_count_tidy %>% 
