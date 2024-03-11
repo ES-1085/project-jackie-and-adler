@@ -176,13 +176,13 @@ ggplot(seabird_time_of_day_count, aes(x = time_of_day)) +
 
 ```{r bird_spotting_condition}
 seabird_count_tidy %>% 
-  filter(!is.na(weather_obs), !is.na(species_group), !is.na(wind_speed_clean), count > 0, year > 14, year < 24) %>%
-  ggplot(aes(x = temp, y= weather_obs, fill = species_group,)) +
+  filter(!is.na(weather_obs), !is.na(species_group), count > 0, year > 14, year < 24) %>%
+  ggplot(aes(x = temp, y= weather_obs, fill = season,)) +
   geom_density_ridges(alpha = 0.75) +
   theme_linedraw() +
   scale_fill_viridis_d() +
-  facet_wrap(~ season) +
-  scale_x_continuous(breaks = seq(-10, 100, by = 10))
+  facet_wrap(~ species_group, scales = "free_x") +
+  xlim(0, 95) 
   
 ```
 
