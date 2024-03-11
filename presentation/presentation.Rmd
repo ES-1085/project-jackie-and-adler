@@ -108,7 +108,7 @@ ggplot(aes(x = time_of_day, fill = time_of_day)) +
 ```
 
 ```{r species_diversity_over_time_jitter_plot, fig.alt = "Jitter plot of the total amount of birds over nine years seperated by the species group, duck, gen_non_waterbird, gen_waterbird, grebe, gull, loon, and shorebird. This chart shows that the number of gull has increased thoughout the years dramatically going from around 90 to around 150 spotted at a time, at some points reaching over 300. Ducks and gen_waterbird increase less significantly going from around 20 to around 50 and 50 to 100 respeticvely, over the nine years. The rest don't show much change and have low numbers."}
- seabird_count_tidy %>%
+ seabird_diversity_graph <- seabird_count_tidy %>%
   filter(!is.na(species_group), count > 0, year > 14, year < 24) %>% 
   ggplot(aes(x = year, y = count, color = species_group)) +
   geom_jitter(alpha = 0.75) +
@@ -116,10 +116,12 @@ ggplot(aes(x = time_of_day, fill = time_of_day)) +
   scale_color_viridis_d() + 
   labs(title = "Total Amount of Birds Over Nine Years", subtitle = "2015-2023", x = "Year", y = "Total Number of Individual", color = "Species Group") +
   scale_x_continuous(breaks = seq(15, 23, by = 1))
+
+ggsave("seabird_diversity_graph.jpeg", seabird_diversity_graph, device = "jpeg", width = 10, height = 8)
 ```
 
 ```{r bird_spotting_condition, fig.alt = "Density plot of temperature and weather oberservations seperated by species group, duck, gen_non_waterbird, gen_waterbird, grebe, gull, loon, and shorebird. The charts show that grebes are not present here in the summer, we don't see many birds past 75 degrees or below 20 other than the major outlier in gen_waterbird. Gen_non_waterbird has a bimodal graph peaking twice at around 30 degrees and again at around 70. Shorebirds shows no data since there were no observations that fit the description."}
-seabird_count_tidy %>% 
+seabird_condition_graph <- seabird_count_tidy %>% 
   filter(!is.na(weather_obs), !is.na(species_group), count > 0, year > 14, year < 24) %>%
   filter(species_group %in% c("duck", "gen_non_waterbird", "gen_waterbird", "grebe", "gull", "loon", "shorebird")) %>%
   ggplot(aes(x = temp, y = weather_obs, fill = season)) +
@@ -127,8 +129,10 @@ seabird_count_tidy %>%
   theme_linedraw() +
   scale_fill_viridis_d() +
   facet_wrap(~ species_group, scales = "free_x") +
-  xlim(0, 95) 
-  
+  xlim(0, 95) +
+  labs(title = "Temperature and Weather Conditions of When Species of Birds are Spotted", subtitle = "2015-2023", x = "Temperature", y = "Weather Condition", color = "Season") 
+ 
+ggsave("seabird_condition_graph.jpeg", seabird_condition_graph, device = "jpeg", width = 10, height = 8) 
 ```
 
 ```{r species_count_vs_wind_direction_plot, fig.alt = "Bar plot of the number of birds recorded in a day and the recorded wind direction. Between the four main cardinal directions (north, south, east, and west), there are more birds seen when the wind is blowing south or west than north or east."}
