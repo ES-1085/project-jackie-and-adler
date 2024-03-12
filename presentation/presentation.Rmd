@@ -139,17 +139,35 @@ ggsave("seabird_condition_graph.jpeg", seabird_condition_graph, device = "jpeg",
 
 ```{r species_count_vs_wind_direction_plot, fig.alt = "Bar plot of the number of birds recorded in a day and the recorded wind direction. Between the four main cardinal directions (north, south, east, and west), there are more birds seen when the wind is blowing south or west than north or east."}
 
+
+seabird_count_tidy <- seabird_count_tidy %>%
+  mutate(wind_direction_new = str_replace(wind_direction_new, "ese", "se")) %>%
+  mutate(wind_direction_new = str_replace(wind_direction_new, "nne", "ne")) %>%
+  mutate(wind_direction_new = str_replace(wind_direction_new, "nnw", "nw")) %>%
+  mutate(wind_direction_new = str_replace(wind_direction_new, "sse", "se")) %>%
+  mutate(wind_direction_new = str_replace(wind_direction_new, "ssw", "sw")) %>%
+  mutate(wind_direction_new = str_replace(wind_direction_new, "wnw", "nw")) %>%
+  mutate(wind_direction_new = str_replace(wind_direction_new, "wsw", "sw"))
+
+  
+seabird_count_tidy <- seabird_count_tidy %>%
+  mutate(wind_direction_new = fct_relevel(
+    wind_direction_new, "n", "ne", "e", "se", "s", "sw", "w", "nw")
+  )
+  
+  
 seabird_count_tidy %>%
   filter(species == "total") %>%
   filter(is.na(wind_direction_new) == FALSE) %>% 
   filter(year > 14, year < 24) %>%
-  ggplot(aes(x = wind_direction_new, y = count, fill = wind_direction_new)) + 
+  ggplot(aes(x = fct_relevel(wind_direction_new), y = count, fill = wind_direction_new)) + 
   geom_col() +
   scale_fill_viridis_d() +
   labs(x = "Wind Direction", y = "Number of Birds", title = "Number of Birds per Day by Wind Direction", fill = "Wind Direction", subtitle = "2015 - 2023") +
   theme_linedraw()
 
 ```
+
 
 ```{r species_count_vs_wind_direction_by_wind_speed_plot, fig.alt = "Segmented bar plot of the number of birds recorded in a day and the recorded wind direction, coloured by the recorded wind speed in MPH. Between the four main cardinal directions (north, south, east, and west), there are more birds seen when the wind is blowing south or west than north or east. In terms of wind speed, there seem to me the most birds present at wind speeds between 5 and 15 MPH."}
 
@@ -166,7 +184,7 @@ seabird_count_tidy %>%
   filter(species == "total") %>%
   filter(is.na(wind_direction_new) == FALSE) %>% 
   filter(year > 14, year < 24) %>%
-  ggplot(aes(x = wind_direction_new, y = count, fill = wind_speed_group)) + 
+  ggplot(aes(x = fct_relevel(wind_direction_new), y = count, fill = wind_speed_group)) + 
   geom_col() +
   scale_fill_viridis_d() +
   labs(x = "Wind Direction", y = "Number of Birds", title = "Number of Birds per Day by Wind Direction", fill = "Wind Speed (mph)", subtitle = "2015 - 2023") +
