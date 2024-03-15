@@ -54,7 +54,7 @@ glance(model)
 
 # Plots
 
-```{r tide_and_count_graph, fig.alt = "Bar graph of the total number of birds present at different tidal levels seperated by year, over nine years, 2015-2023. We notice on average birds are seen more at high tide than low tide and significantly more than mid tide. In 2020, 2022, 2023 the difference in number of birds spotted at mid tide verus high tide was around 1500."}
+```{r tide_and_count_graph, fig.alt = "Bar graph of the total number of birds present at different tidal levels separated by year, over nine years, 2015-2023. We notice on average birds are seen more at high tide than low tide and significantly more than mid tide. In 2020, 2022, 2023 the difference in number of birds spotted at mid tide verus high tide was around 1500."}
 
 
 seabird_count_tidy <- seabird_count_tidy %>%
@@ -65,14 +65,16 @@ seabird_count_tidy <- seabird_count_tidy %>%
     )
   )  
   
-seabird_count_tidy |> filter(year %in% c(15, 16, 17, 18, 19, 20, 21, 22, 23)) %>% 
+seabird_tide_graph <- seabird_count_tidy |> filter(year %in% c(15, 16, 17, 18, 19, 20, 21, 22, 23)) %>% 
   group_by(tide_obs) %>% 
   ggplot(aes(x = fct_relevel(tide_obs), fill = tide_obs)) + 
      geom_bar() + 
      facet_wrap(~ year) +
     theme_linedraw() +
   scale_fill_viridis_d() + 
-  labs(title = "Total Number of Birds Present at Different Tide Levels", subtitle = "Seperated by Year Over Nine Years 2015-2023", x = "Tide Observation", y = "Number of Birds ")
+  labs(title = "Total Number of Birds Present at Different Tide Levels", subtitle = "Seperated by Year Over Nine Years 2015-2023", x = "Tide Observation", y = "Number of Birds")
+
+ggsave("seabird_tide_graph.jpeg", seabird_tide_graph, device = "jpeg", width = 10, height = 8)
 
 ```
 
@@ -107,7 +109,7 @@ ggplot(aes(x = time_of_day, fill = time_of_day)) +
   scale_x_continuous(breaks = seq(15, 23, by = 1))
 ```
 
-```{r species_diversity_over_time_jitter_plot, fig.alt = "Jitter plot of the total amount of birds over nine years seperated by the species group, duck, gen_non_waterbird, gen_waterbird, grebe, gull, loon, and shorebird. This chart shows that the number of gull has increased thoughout the years dramatically going from around 90 to around 150 spotted at a time, at some points reaching over 300. Ducks and gen_waterbird increase less significantly going from around 20 to around 50 and 50 to 100 respeticvely, over the nine years. The rest don't show much change and have low numbers."}
+```{r species_diversity_over_time_jitter_plot, fig.alt = "Jitter plot of the total amount of birds over nine years seperated by the species group, duck, gen_non_waterbird, gen_waterbird, grebe, gull, loon, and shorebird. This chart shows that the number of gull has increased throughout the years dramatically going from around 90 to around 150 spotted at a time, at some points reaching over 300. Ducks and gen_waterbird increase less significantly going from around 20 to around 50 and 50 to 100 respectively, over the nine years. The rest don't show much change and have low numbers."}
  seabird_diversity_graph <- seabird_count_tidy %>%
   filter(!is.na(species_group), count > 0, year > 14, year < 24) %>% 
   ggplot(aes(x = year, y = count, color = species_group)) +
@@ -154,7 +156,7 @@ seabird_count_tidy <- seabird_count_tidy %>%
   )
   
   
-seabird_count_tidy %>%
+seabird_direction_graph <- seabird_count_tidy %>%
   filter(species == "total") %>%
   filter(is.na(wind_direction_new) == FALSE) %>% 
   filter(year > 14, year < 24) %>%
@@ -163,6 +165,7 @@ seabird_count_tidy %>%
   scale_fill_viridis_d() +
   labs(x = "Wind Direction", y = "Number of Birds", title = "Number of Birds per Day by Wind Direction", fill = "Wind Direction", subtitle = "2015 - 2023") +
   theme_linedraw()
+ggsave("seabird_wind_direction_graph.jpeg", seabird_direction_graph, device = "jpeg", width = 10, height = 8) 
 
 ```
 
@@ -178,7 +181,7 @@ seabird_count_tidy <- seabird_count_tidy %>%
                                       wind_speed_new >= 25 & wind_speed_new <= 29.9 ~ "25 - 29.9",
                                       wind_speed_new == 30 ~ "0 - 4.9",))
 
-seabird_count_tidy %>%
+seabird_wind_direction_and_speed_graph <- seabird_count_tidy %>%
   filter(species == "total") %>%
   filter(is.na(wind_direction_new) == FALSE) %>% 
   filter(year > 14, year < 24) %>%
@@ -187,12 +190,13 @@ seabird_count_tidy %>%
   scale_fill_viridis_d() +
   labs(x = "Wind Direction", y = "Number of Birds", title = "Number of Birds per Day by Wind Direction", fill = "Wind Speed (mph)", subtitle = "2015 - 2023") +
   theme_linedraw()
+ggsave("seabird_wind_direction_and_speed_graph.jpeg", seabird_wind_direction_and_speed_graph, device = "jpeg", width = 10, height = 8)
 
 ```
 
 ```{r species_count_and_wind_speed_plot, fit.alt = "Jitter plot of the number of birds recorded in a day and the recorded wind speed (in MPH). According to the graph, there appear to be a higher frequency of birds present at wind speeds below 15 MPH."}
 
-seabird_count_tidy %>%
+seabird_wind_speed_graph <- seabird_count_tidy %>%
   filter(species == "total") %>%
   filter(year > 14, year < 24) %>%
   ggplot(aes(x = wind_speed_new, y = count, colour = wind_speed_new)) +
@@ -201,7 +205,7 @@ seabird_count_tidy %>%
   geom_smooth(method = "lm", colour = "black", size = 0.7) +
   theme_linedraw() +
   scale_colour_viridis_c(option = "turbo")
-
+ggsave("seabird_wind_speed_graph.jpeg", seabird_wind_speed_graph, device = "jpeg", width = 10, height = 8)
 ```
 
 ```{r number_of_geese_at_goose_cove}
