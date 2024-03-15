@@ -5,7 +5,7 @@ Place data file(s) in this folder.
 Then, include codebooks (variables, and their descriptions) for your data file(s)
 using the following format.
 
-## name of data file
+## seabird_count_tidy
 
 - `year` : Year, in the 2000s.
 - `season` : Season the data was collected during. (Winter = December, January, and February. Spring = March, April, and May. Summer = June, July, and August. Fall = September, October, and November.)
@@ -32,3 +32,7 @@ using the following format.
 - `time_of_day` : Time period in the day in which the data was collected. (Morning = 05:30 - 11:59. Afternoon = 12:00 - 16:59. Evening = 17:00 - 20:29. Night = 20:30 - 05:30.)
 - `species_group` : General categories of waterbirds and some non-waterbirds. (Categories are gulls, loons, ducks, grebes, shorebirds, general waterbirds, and general non-waterbirds.)
 - `wind_speed_group` : Wind speed grouped into ranges. (0 - 4.9; 5 - 9.9; 10 - 14.9; 15 - 19.9; 20 - 24.9, 25 - 29.9, 30)
+
+## Write Up
+
+## Link to presentation

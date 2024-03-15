@@ -264,7 +264,7 @@ write_csv(seabird_count_tidy, file = "../data/seabird_count_tidy.csv")
 ```{r glimpse}
 
 seabird_count_tidy %>%
-  distinct(species_group)
+  glimpse()
 
 ```
 
